@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victory Sports Arena | Football, Cricket &amp; Sports Arena in Chattogram</title>
+<meta name="description" content="Victory Sports Arena in North Halishahar, Chattogram — a sports destination for football, cricket, futsal, tournaments and sports activities.">
+<meta name="keywords" content="Victory Sports Arena, Victory Sports Arena Chattogram, football turf Chattogram, cricket turf Chattogram, futsal Chattogram, sports arena Chattogram, football turf Halishahar, sports facility Halishahar">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================================ HEADER -->
+<header class="site-header">
+  <div class="container">
+    <a href="#top" class="logo">VICTORY<span>.</span></a>
+    <nav class="nav-links">
+      <a href="#facilities">Facilities</a>
+      <a href="#why">Why Victory</a>
+      <a href="#events">Events</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#location">Location</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="header-cta">
+      <a href="#location" class="btn btn-outline">Get Directions</a>
+      <button class="btn btn-primary" id="openBookingBtn">Book Your Slot</button>
+    </div>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<!-- =============================================================== HERO -->
+<section class="hero" id="top">
+  <svg class="hero-pitch-lines" viewBox="0 0 1200 800" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <circle cx="1050" cy="380" r="180" fill="none" stroke="#2ef98a" stroke-width="1.5" opacity="0.35"/>
+    <circle cx="1050" cy="380" r="4" fill="#2ef98a" opacity="0.6"/>
+    <line x1="900" y1="0" x2="900" y2="800" stroke="#2ef98a" stroke-width="1.5" opacity="0.2"/>
+    <rect x="900" y="280" width="90" height="200" fill="none" stroke="#2ef98a" stroke-width="1.5" opacity="0.22"/>
+  </svg>
+  <div class="container hero-content">
+    <p class="eyebrow">North Halishahar · Chattogram</p>
+    <h1>PLAY. COMPETE.<span class="accent-line">EXPERIENCE VICTORY.</span></h1>
+    <p class="hero-lead">Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="openBookingBtn2">Book Your Slot</button>
+      <a href="#facilities" class="btn btn-outline">Explore Facilities</a>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- ========================================================= FACILITIES -->
+<section id="facilities">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">What we offer</p>
+        <h2 class="section-title">Facilities</h2>
+      </div>
+    </div>
+    <p class="section-lead">Every facility below is kept current from the Victory Sports Arena admin panel — availability, pricing and rules update in real time.</p>
+    <div class="card-grid" id="facilityGrid">
+      <!-- populated by js/main.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== SPORTS EXPERIENCE -->
+<section class="tight">
+  <div class="container">
+    <p class="eyebrow">Sports Experience</p>
+    <div class="turf-highlight">
+      <div>
+        <h2 class="section-title" style="font-size:clamp(28px,3.6vw,40px);">Premium FIFA&#8209;Certified Turf</h2>
+        <p class="section-lead" style="margin-bottom:0;">Victory Sports Arena features FIFA-certified 50&nbsp;mm infill grass, providing a professional-quality playing surface for football and futsal.</p>
+        <div class="stat-strip">
+          <div class="stat"><b>50mm</b><span>Infill Grass</span></div>
+          <div class="stat"><b>FIFA</b><span>Certified Turf</span></div>
+          <div class="stat"><b>3</b><span>Sports Hosted</span></div>
+        </div>
+      </div>
+      <div class="turf-visual" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================================================== WHY -->
+<section id="why">
+  <div class="container">
+    <p class="eyebrow">Why Victory</p>
+    <h2 class="section-title">Built for Serious Play</h2>
+    <p class="section-lead">Reasons players and teams choose Victory Sports Arena.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <span class="why-num">01</span>
+        <h4>Premium Turf</h4>
+        <p>FIFA-certified 50&nbsp;mm infill grass.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-num">02</span>
+        <h4>Multiple Sports</h4>
+        <p>Football, cricket and futsal activities.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-num">03</span>
+        <h4>Tournament Ready</h4>
+        <p>A venue for competitive sports events and tournaments.</p>
+      </div>
+      <div class="why-card">
+        <span class="why-num">04</span>
+        <h4>Convenient Location</h4>
+        <p>Located in North Halishahar, Chattogram.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= BOOKING CTA -->
+<section class="tight">
+  <div class="container">
+    <div class="booking-cta">
+      <p class="eyebrow" style="justify-content:center;">Reserve your time</p>
+      <h2 class="section-title">Ready to Play?</h2>
+      <p>Submit a booking request in under a minute. Our team reviews and confirms every request — you'll hear back with confirmation details.</p>
+      <button class="btn btn-primary" id="openBookingBtn3">Book Your Slot</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ EVENTS -->
+<section id="events">
+  <div class="container">
+    <p class="eyebrow">Tournaments</p>
+    <h2 class="section-title">Events &amp; Tournaments</h2>
+    <p class="section-lead">Competitive events hosted at Victory Sports Arena.</p>
+    <div id="eventsList" style="display:flex; flex-direction:column; gap:16px;">
+      <!-- populated by js/main.js -->
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== GALLERY -->
+<section id="gallery">
+  <div class="container">
+    <p class="eyebrow">Inside the arena</p>
+    <h2 class="section-title">Gallery</h2>
+    <div class="gallery-filters" id="galleryFilters">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="Football">Football</button>
+      <button data-cat="Cricket">Cricket</button>
+      <button data-cat="Futsal">Futsal</button>
+      <button data-cat="Tournament">Tournament</button>
+      <button data-cat="Facility">Facility</button>
+      <button data-cat="Events">Events</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- populated by js/main.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================== LOCATION -->
+<section id="location">
+  <div class="container">
+    <p class="eyebrow">Find us</p>
+    <h2 class="section-title">Location</h2>
+    <div class="location-grid" style="margin-top:36px;">
+      <div class="location-map">
+        Map preview connects once a Google Maps location is provided by management.
+      </div>
+      <div class="location-details">
+        <p class="addr">Victory Sports Arena</p>
+        <p>Ful Chowdhury Para, North Halishahar,<br>Chattogram 4216, Bangladesh<br><br>Landmark: Beside Halishahar Artillery Firing Range</p>
+        <div class="location-actions">
+          <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Victory+Sports+Arena+North+Halishahar+Chattogram" target="_blank" rel="noopener">Get Directions</a>
+          <a class="btn btn-outline" id="callNowBtn" href="tel:+8801601669203">Call Now</a>
+          <a class="btn btn-outline" href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================== CONTACT -->
+<section class="tight" id="contact">
+  <div class="container">
+    <p class="eyebrow">Get in touch</p>
+    <h2 class="section-title">Contact</h2>
+    <p class="section-lead">Questions about bookings, tournaments or facilities — reach out any time.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <h4>Phone</h4>
+        <p id="contactPhone"><a href="tel:+8801601669203" style="color:inherit;">+880 1601-669203</a></p>
+      </div>
+      <div class="why-card">
+        <h4>Facebook</h4>
+        <p><a href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener" style="color:inherit;">facebook.com/victorysportarena</a></p>
+      </div>
+      <div class="why-card">
+        <h4>Address</h4>
+        <p>Ful Chowdhury Para, North Halishahar, Chattogram 4216</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#top" class="logo">VICTORY<span>.</span></a>
+        <p style="margin-top:16px; max-width:36ch;">Victory Sports Arena is a sports facility in North Halishahar, Chattogram, providing a dedicated environment for football, cricket, futsal and competitive sports activities.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href="#facilities">Facilities</a>
+        <a href="#events">Events &amp; Tournaments</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#location">Location</a>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <a href="tel:+8801601669203">+880 1601-669203</a>
+        <a href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener">Facebook</a>
+        <a href="admin.html">Admin Login</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Victory Sports Arena. All rights reserved.</span>
+      <span>Ful Chowdhury Para, North Halishahar, Chattogram 4216</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================================================== BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <button class="modal-close" id="closeBookingBtn" aria-label="Close">✕</button>
+    <p class="eyebrow">Booking request</p>
+    <h2 class="section-title" style="font-size:28px; margin-bottom:22px;">Book Your Slot</h2>
+
+    <form id="bookingForm">
+      <div class="field">
+        <label for="bf-facility">Facility</label>
+        <select id="bf-facility" required></select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="bf-date">Date</label>
+          <input type="date" id="bf-date" required>
+        </div>
+        <div class="field">
+          <label for="bf-start">Start time</label>
+          <input type="time" id="bf-start" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="bf-duration">Duration</label>
+        <select id="bf-duration" required>
+          <option value="60">1 hour</option>
+          <option value="90">1.5 hours</option>
+          <option value="120">2 hours</option>
+        </select>
+      </div>
+      <div class="price-preview" id="pricePreview">Select a facility, date and time to see pricing</div>
+      <div class="field-row">
+        <div class="field">
+          <label for="bf-name">Full name</label>
+          <input type="text" id="bf-name" required>
+        </div>
+        <div class="field">
+          <label for="bf-phone">Phone number</label>
+          <input type="tel" id="bf-phone" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="bf-team">Team / company name (optional)</label>
+        <input type="text" id="bf-team">
+      </div>
+      <div class="field">
+        <label for="bf-notes">Special request / notes (optional)</label>
+        <textarea id="bf-notes" rows="3"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="submitBookingBtn">Submit Booking Request</button>
+      <p class="form-note">This is a request, not a confirmation. Victory Sports Arena will review and confirm your booking.</p>
+    </form>
+
+    <div class="form-success" id="bookingSuccess">
+      <div class="check">✓</div>
+      <h3 style="font-size:20px; text-transform:none; font-family:var(--font-body); margin-bottom:10px;">Request received</h3>
+      <p style="color:var(--text-muted); font-size:14px;">Your booking request is <strong style="color:var(--accent);">pending review</strong>. We'll contact you at the phone number provided to confirm.</p>
+      <button class="btn btn-outline" style="margin-top:20px;" id="closeSuccessBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-banner" id="demoBanner">
+  <b>Demo mode</b> — this preview is running on placeholder data. Paste your Firebase config into <code>js/firebase-config.js</code> to connect real content.
+</div>
+
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/pricing.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
