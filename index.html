@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Victory Sports Arena | Football, Cricket &amp; Sports Arena in Chattogram</title>
+<meta name="description" content="Victory Sports Arena in North Halishahar, Chattogram — a sports destination for football, cricket, futsal, tournaments and sports activities.">
+<meta name="keywords" content="Victory Sports Arena, Victory Sports Arena Chattogram, football turf Chattogram, cricket turf Chattogram, futsal Chattogram, sports arena Chattogram, football turf Halishahar, sports facility Halishahar">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  --bg: #0a0d12;
+  --bg-elevated: #12161d;
+  --bg-elevated-2: #1a212b;
+  --line: #232b36;
+  --text: #eef2f6;
+  --text-muted: #8d97a6;
+  --accent: #2ef98a;
+  --accent-dim: #1c8f52;
+  --accent-ink: #04140b;
+  --danger: #ff5c5c;
+  --warning: #ffc107;
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --container: 1180px;
+  --radius: 4px;
+  --radius-lg: 10px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+.eyebrow::before { content: ''; width: 22px; height: 2px; background: var(--accent); display: inline-block; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .01em; font-weight: 400; margin: 0; line-height: 1.05; }
+h2.section-title { font-size: clamp(32px, 4.4vw, 52px); margin-bottom: 12px; }
+p.section-lead { color: var(--text-muted); max-width: 60ch; font-size: 16px; margin: 0 0 40px; }
+button, .btn { font-family: var(--font-body); font-weight: 700; font-size: 14px; letter-spacing: .03em; text-transform: uppercase; border-radius: var(--radius); border: none; cursor: pointer; padding: 15px 28px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: transform .15s ease, background .15s ease, border-color .15s ease; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { transform: translateY(-2px); background: #4bffa1; }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--line); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 9px 16px; font-size: 12px; }
+
+/* header */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,13,18,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+.logo { font-family: var(--font-display); font-size: 22px; letter-spacing: .03em; text-transform: uppercase; }
+.logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 28px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.nav-links a { color: var(--text-muted); transition: color .15s; }
+.nav-links a:hover, .nav-links a.current { color: var(--text); }
+.header-cta { display: flex; align-items: center; gap: 16px; }
+.nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 26px; padding: 4px; }
+@media (max-width: 860px) { .nav-links { display: none; } .header-cta .btn-outline { display: none; } .nav-toggle { display: block; } }
+
+/* hero */
+.hero { position: relative; min-height: 90svh; display: flex; align-items: center; overflow: hidden; padding-top: 76px; background: radial-gradient(120% 100% at 80% 0%, #0f1a14 0%, var(--bg) 55%); }
+.hero-pitch-lines { position: absolute; inset: 0; z-index: 0; opacity: .5; pointer-events: none; }
+.hero-content { position: relative; z-index: 2; max-width: 760px; padding: 70px 0 50px; }
+.hero h1 { font-size: clamp(40px, 7vw, 78px); margin-bottom: 20px; }
+.hero h1 .accent-line { color: var(--accent); display: block; }
+.hero-lead { font-size: 18px; color: var(--text-muted); max-width: 46ch; margin-bottom: 32px; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero.small { min-height: 46vh; }
+
+.ticker { position: relative; z-index: 2; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-elevated); overflow: hidden; white-space: nowrap; }
+.ticker-track { display: inline-flex; animation: ticker-scroll 28s linear infinite; padding: 14px 0; }
+.ticker-track span { font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); padding: 0 28px; border-right: 1px solid var(--line); }
+.ticker-track span.on { color: var(--accent); }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+section { padding: 90px 0; }
+section.tight { padding: 60px 0; }
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; }
+.facility-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; transition: border-color .2s, transform .2s; display: flex; flex-direction: column; }
+.facility-card:hover { border-color: var(--accent-dim); transform: translateY(-4px); }
+.facility-media { aspect-ratio: 16/10; background: linear-gradient(135deg,#16321f,#0e1319); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; position: relative; }
+.facility-media img { width: 100%; height: 100%; object-fit: cover; }
+.facility-tag { position: absolute; top: 14px; left: 14px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 3px; }
+.facility-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.facility-body h3 { font-size: 22px; }
+.facility-body p { color: var(--text-muted); font-size: 14px; margin: 0; flex: 1; }
+.facility-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; }
+.facility-meta .price { color: var(--accent); font-weight: 700; }
+
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.why-card { background: var(--bg-elevated); padding: 30px 24px; }
+.why-num { font-family: var(--font-mono); color: var(--accent); font-size: 13px; margin-bottom: 16px; display: block; }
+.why-card h4 { font-size: 19px; text-transform: none; margin-bottom: 8px; font-family: var(--font-body); font-weight: 800; }
+.why-card p { color: var(--text-muted); font-size: 14px; margin: 0; }
+
+.turf-highlight { background: linear-gradient(120deg, var(--bg-elevated) 0%, #101d15 100%); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 50px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 36px; align-items: center; }
+.turf-highlight .stat-strip { display: flex; gap: 26px; margin-top: 24px; flex-wrap: wrap; }
+.turf-highlight .stat { font-family: var(--font-mono); }
+.turf-highlight .stat b { display: block; color: var(--accent); font-size: 22px; }
+.turf-highlight .stat span { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.turf-visual { aspect-ratio: 4/3; border-radius: var(--radius); background: repeating-linear-gradient(90deg,#143621 0 40px,#123020 40px 80px); position: relative; overflow: hidden; }
+@media (max-width: 800px) { .turf-highlight { grid-template-columns: 1fr; padding: 30px; } }
+
+.booking-cta { background: var(--bg-elevated); border: 1px solid var(--accent-dim); border-radius: var(--radius-lg); padding: 50px; text-align: center; }
+.booking-cta h2 { margin-bottom: 14px; }
+.booking-cta p { color: var(--text-muted); max-width: 50ch; margin: 0 auto 28px; }
+
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(5,7,10,.8); display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); max-width: 560px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 34px; margin: auto; }
+.modal.wide { max-width: 760px; }
+.modal-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 7px; font-weight: 600; }
+.field input, .field select, .field textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 11px 14px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; }
+.field input:focus, .field select:focus, .field textarea:focus, button:focus-visible, .btn:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.price-preview { font-family: var(--font-mono); background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px; text-align: center; margin-bottom: 18px; }
+.price-preview b { color: var(--accent); font-size: 20px; }
+.price-preview.err { border-color: var(--danger); color: var(--danger); }
+.form-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center; }
+.form-success { display: none; text-align: center; padding: 20px 0; }
+.form-success.show { display: block; }
+.form-success .check { font-size: 44px; color: var(--accent); margin-bottom: 14px; }
+.form-error-banner { display: none; background: rgba(255,92,92,.12); border: 1px solid var(--danger); color: var(--danger); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; margin-bottom: 16px; }
+.form-error-banner.show { display: block; }
+
+.event-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; display: flex; gap: 20px; align-items: flex-start; }
+.event-date { font-family: var(--font-mono); text-align: center; min-width: 70px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 8px; }
+.event-date b { display: block; font-size: 22px; color: var(--accent); }
+.event-date span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+.status-pill, .badge { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+.status-open, .badge-confirmed, .badge-active { background: rgba(46,249,138,.14); color: var(--accent); }
+.status-closed, .badge-rejected, .badge-cancelled { background: rgba(255,92,92,.14); color: var(--danger); }
+.status-upcoming, .badge-inactive { background: rgba(141,151,166,.16); color: var(--text-muted); }
+.status-completed { background: rgba(141,151,166,.1); color: var(--text-muted); }
+.badge-pending { background: rgba(255,193,7,.14); color: var(--warning); }
+.badge-manager { background: rgba(46,249,138,.1); color: #7fe9ab; }
+.badge-staff { background: rgba(141,151,166,.14); color: var(--text-muted); }
+.badge-admin { background: rgba(46,249,138,.2); color: var(--accent); }
+
+.empty-state { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 44px; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+.gallery-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+.gallery-filters button { background: transparent; border: 1px solid var(--line); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12px; }
+.gallery-filters button.active { border-color: var(--accent); color: var(--accent); }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 14px; }
+.gallery-grid .g-item { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; background: var(--bg-elevated); position: relative; }
+.gallery-grid .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.gallery-grid .g-item:hover img { transform: scale(1.06); }
+
+.location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.location-map { aspect-ratio: 4/3; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 13px; text-align: center; padding: 20px; }
+.location-details p { color: var(--text-muted); margin: 0 0 22px; }
+.location-details .addr { font-size: 18px; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+.location-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+@media (max-width: 800px) { .location-grid { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--line); padding: 50px 0 28px; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+.footer-grid h5 { font-family: var(--font-body); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin: 0 0 16px; }
+.footer-grid a, .footer-grid p { color: var(--text-muted); font-size: 14px; display: block; margin-bottom: 10px; }
+.footer-grid a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--line); padding-top: 22px; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr; } }
+
+.demo-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 150; background: #1a212b; border-top: 1px solid var(--accent-dim); color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; text-align: center; padding: 10px; display: none; }
+.demo-banner.show { display: block; }
+.demo-banner b { color: var(--accent); }
+
+/* pricing page specific */
+.pricing-table-wrap { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 34px; }
+.pricing-table-wrap h3 { font-family: var(--font-body); font-weight: 800; text-transform: none; font-size: 18px; padding: 20px 22px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.pricing-table { width: 100%; border-collapse: collapse; }
+.pricing-table th, .pricing-table td { text-align: left; padding: 13px 22px; font-size: 14px; border-bottom: 1px solid var(--line); }
+.pricing-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; background: var(--bg-elevated-2); }
+.pricing-table tr:last-child td { border-bottom: none; }
+.pricing-table .price-cell { font-family: var(--font-mono); color: var(--accent); font-weight: 700; }
+.offer-strip { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+.offer-card { min-width: 220px; background: var(--bg-elevated); border: 1px solid var(--accent-dim); border-radius: var(--radius-lg); padding: 20px; }
+.offer-card b { color: var(--accent); font-family: var(--font-mono); font-size: 20px; display: block; margin-bottom: 6px; }
+
+/* ============================================================ ADMIN ============================================================ */
+body.admin-body { display: flex; min-height: 100vh; }
+.login-screen { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 100% at 50% 0%, #0f1a14 0%, var(--bg) 60%); padding: 24px; }
+.login-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 44px; width: 100%; max-width: 380px; }
+.login-card .logo { display: block; text-align: center; font-size: 26px; margin-bottom: 6px; }
+.login-card .eyebrow { justify-content: center; margin-bottom: 26px; }
+.login-error { color: var(--danger); font-size: 13px; margin: -6px 0 16px; display: none; }
+.login-error.show { display: block; }
+
+.sidebar { width: 240px; flex-shrink: 0; background: var(--bg-elevated); border-right: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; position: sticky; top: 0; }
+.sidebar .logo-wrap { padding: 24px 22px; border-bottom: 1px solid var(--line); }
+.sidebar-nav { flex: 1; padding: 14px 12px; overflow-y: auto; }
+.sidebar-nav button { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; color: var(--text-muted); text-transform: none; font-weight: 600; font-size: 14px; letter-spacing: 0; padding: 12px 14px; border-radius: var(--radius); text-align: left; cursor: pointer; margin-bottom: 2px; }
+.sidebar-nav button:hover { background: var(--bg-elevated-2); color: var(--text); }
+.sidebar-nav button.active { background: var(--bg-elevated-2); color: var(--accent); }
+.sidebar-foot { padding: 16px 22px; border-top: 1px solid var(--line); }
+.sidebar-foot .user-email { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; word-break: break-all; }
+.sidebar-foot .user-role { margin-bottom: 12px; }
+
+.admin-main { flex: 1; min-width: 0; }
+.admin-topbar { height: 68px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: sticky; top: 0; background: var(--bg); z-index: 5; }
+.admin-topbar h2 { font-size: 20px; text-transform: none; font-family: var(--font-body); font-weight: 800; }
+.admin-content { padding: 30px; max-width: 1240px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 16px; margin-bottom: 30px; }
+.stat-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; }
+.stat-card .num { font-family: var(--font-mono); font-size: 28px; color: var(--accent); }
+.stat-card .lbl { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+
+.data-table { width: 100%; border-collapse: collapse; background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.data-table th, .data-table td { text-align: left; padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--line); }
+.data-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; background: var(--bg-elevated-2); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.data-table tbody tr:hover { background: rgba(255,255,255,.02); }
+
+.mini-btn { font-family: var(--font-body); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 6px 10px; border-radius: var(--radius); border: 1px solid var(--line); background: transparent; color: var(--text-muted); cursor: pointer; }
+.mini-btn.approve { border-color: var(--accent-dim); color: var(--accent); }
+.mini-btn.reject { border-color: #5c2222; color: var(--danger); }
+.mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 14px; flex-wrap: wrap; }
+.toolbar h2 { font-size: 22px; text-transform: none; font-family: var(--font-body); font-weight: 800; }
+.toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.filter-bar input, .filter-bar select { background: var(--bg-elevated); border: 1px solid var(--line); color: var(--text); padding: 9px 12px; border-radius: var(--radius); font-size: 13px; }
+
+.coming-soon { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 56px 30px; text-align: center; color: var(--text-muted); }
+.coming-soon h3 { font-family: var(--font-body); font-weight: 800; text-transform: none; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+
+/* calendar */
+.calendar-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.calendar-tabs button { background: var(--bg-elevated); border: 1px solid var(--line); color: var(--text-muted); padding: 9px 18px; border-radius: 20px; font-size: 12px; }
+.calendar-tabs button.active { border-color: var(--accent); color: var(--accent); }
+.calendar-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.calendar-nav .cal-label { font-family: var(--font-mono); font-size: 14px; min-width: 180px; text-align: center; }
+.month-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.month-grid .dow { background: var(--bg-elevated-2); padding: 10px; text-align: center; font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: .06em; }
+.month-grid .day-cell { background: var(--bg-elevated); min-height: 84px; padding: 8px; cursor: pointer; font-size: 13px; position: relative; }
+.month-grid .day-cell:hover { background: var(--bg-elevated-2); }
+.month-grid .day-cell.other-month { opacity: .3; }
+.month-grid .day-cell.today { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.month-grid .day-cell .count { position: absolute; bottom: 8px; right: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: rgba(46,249,138,.12); padding: 2px 7px; border-radius: 10px; }
+.week-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; }
+.week-col { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; min-height: 160px; }
+.week-col .wc-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-align: center; }
+.week-col .wc-item, .day-view-item { background: var(--bg-elevated-2); border-radius: var(--radius); padding: 8px 10px; font-size: 12px; margin-bottom: 6px; }
+.day-view-list { display: flex; flex-direction: column; gap: 8px; }
+.day-view-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; font-size: 13px; }
+
+/* gallery admin */
+.upload-drop { border: 2px dashed var(--line); border-radius: var(--radius-lg); padding: 30px; text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 22px; }
+.upload-drop input { margin-top: 12px; }
+.admin-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 12px; }
+.admin-gallery-grid .ag-item { position: relative; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.admin-gallery-grid .ag-item img { width: 100%; height: 100%; object-fit: cover; }
+.admin-gallery-grid .ag-item .ag-overlay { position: absolute; inset: 0; background: rgba(5,7,10,.75); opacity: 0; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.admin-gallery-grid .ag-item:hover .ag-overlay { opacity: 1; }
+.admin-gallery-grid .ag-cat { position: absolute; top: 6px; left: 6px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+
+@media (max-width: 900px) {
+  .sidebar { position: fixed; left: -240px; z-index: 50; transition: left .2s; }
+  .sidebar.open { left: 0; }
+  .admin-content { padding: 18px; }
+  .month-grid .day-cell { min-height: 56px; font-size: 11px; }
+  .week-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="#top" class="logo">VICTORY<span>.</span></a>
+    <nav class="nav-links">
+      <a href="#facilities">Facilities</a>
+      <a href="#why">Why Victory</a>
+      <a href="#events">Events</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#location">Location</a>
+      <a href="#contact">Contact</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <div class="header-cta">
+      <a href="#location" class="btn btn-outline">Get Directions</a>
+      <button class="btn btn-primary" id="openBookingBtn">Book Your Slot</button>
+    </div>
+    <button class="nav-toggle" aria-label="Menu">☰</button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <svg class="hero-pitch-lines" viewBox="0 0 1200 800" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
+    <circle cx="1050" cy="380" r="180" fill="none" stroke="#2ef98a" stroke-width="1.5" opacity="0.35"/>
+    <circle cx="1050" cy="380" r="4" fill="#2ef98a" opacity="0.6"/>
+    <line x1="900" y1="0" x2="900" y2="800" stroke="#2ef98a" stroke-width="1.5" opacity="0.2"/>
+    <rect x="900" y="280" width="90" height="200" fill="none" stroke="#2ef98a" stroke-width="1.5" opacity="0.22"/>
+  </svg>
+  <div class="container hero-content">
+    <p class="eyebrow">North Halishahar · Chattogram</p>
+    <h1>PLAY. COMPETE.<span class="accent-line">EXPERIENCE VICTORY.</span></h1>
+    <p class="hero-lead">Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="openBookingBtn2">Book Your Slot</button>
+      <a href="#facilities" class="btn btn-outline">Explore Facilities</a>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<section id="facilities">
+  <div class="container">
+    <div class="section-head"><div><p class="eyebrow">What we offer</p><h2 class="section-title">Facilities</h2></div></div>
+    <p class="section-lead">Every facility below is kept current from the Victory Sports Arena admin panel — availability, pricing and rules update in real time.</p>
+    <div class="card-grid" id="facilityGrid"></div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container">
+    <p class="eyebrow">Sports Experience</p>
+    <div class="turf-highlight">
+      <div>
+        <h2 class="section-title" style="font-size:clamp(28px,3.6vw,40px);">Premium FIFA&#8209;Certified Turf</h2>
+        <p class="section-lead" style="margin-bottom:0;">Victory Sports Arena features FIFA-certified 50&nbsp;mm infill grass, providing a professional-quality playing surface for football and futsal. Cricket sessions run in a dedicated environment for competitive play.</p>
+        <div class="stat-strip">
+          <div class="stat"><b>50mm</b><span>Infill Grass</span></div>
+          <div class="stat"><b>FIFA</b><span>Certified Turf</span></div>
+          <div class="stat"><b>3</b><span>Sports Hosted</span></div>
+        </div>
+      </div>
+      <div class="turf-visual" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="container">
+    <p class="eyebrow">Why Victory</p>
+    <h2 class="section-title">Built for Serious Play</h2>
+    <p class="section-lead">Reasons players and teams choose Victory Sports Arena.</p>
+    <div class="why-grid">
+      <div class="why-card"><span class="why-num">01</span><h4>Premium Turf</h4><p>FIFA-certified 50&nbsp;mm infill grass.</p></div>
+      <div class="why-card"><span class="why-num">02</span><h4>Multiple Sports</h4><p>Football, cricket and futsal activities.</p></div>
+      <div class="why-card"><span class="why-num">03</span><h4>Tournament Ready</h4><p>A venue for competitive sports events and tournaments.</p></div>
+      <div class="why-card"><span class="why-num">04</span><h4>Convenient Location</h4><p>Located in North Halishahar, Chattogram.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container">
+    <div class="booking-cta">
+      <p class="eyebrow" style="justify-content:center;">Reserve your time</p>
+      <h2 class="section-title">Ready to Play?</h2>
+      <p>Submit a booking request in under a minute. Our team reviews and confirms every request — you'll hear back with confirmation details.</p>
+      <button class="btn btn-primary" id="openBookingBtn3">Book Your Slot</button>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container">
+    <p class="eyebrow">About Victory Sports Arena</p>
+    <h2 class="section-title" style="font-size:clamp(28px,3.6vw,40px);">Our Story</h2>
+    <p class="section-lead" style="margin-bottom:0;">Victory Sports Arena is a sports facility in North Halishahar, Chattogram, providing a dedicated environment for football, cricket, futsal and competitive sports activities. The arena has hosted tournaments and sports events and has invested in upgraded turf infrastructure.</p>
+  </div>
+</section>
+
+<section id="events">
+  <div class="container">
+    <p class="eyebrow">Tournaments</p>
+    <h2 class="section-title">Events &amp; Tournaments</h2>
+    <p class="section-lead">Competitive events hosted at Victory Sports Arena.</p>
+    <div id="eventsList" style="display:flex;flex-direction:column;gap:16px;"></div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="container">
+    <p class="eyebrow">Inside the arena</p>
+    <h2 class="section-title">Gallery</h2>
+    <div class="gallery-filters" id="galleryFilters">
+      <button class="active" data-cat="all">All</button>
+      <button data-cat="Football">Football</button>
+      <button data-cat="Cricket">Cricket</button>
+      <button data-cat="Futsal">Futsal</button>
+      <button data-cat="Tournament">Tournament</button>
+      <button data-cat="Facility">Facility</button>
+      <button data-cat="Events">Events</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<section id="location">
+  <div class="container">
+    <p class="eyebrow">Find us</p>
+    <h2 class="section-title">Location</h2>
+    <div class="location-grid" style="margin-top:36px;">
+      <div class="location-map">Map preview connects once a Google Maps location is provided by management.</div>
+      <div class="location-details">
+        <p class="addr">Victory Sports Arena</p>
+        <p>Ful Chowdhury Para, North Halishahar,<br>Chattogram 4216, Bangladesh<br><br>Landmark: Beside Halishahar Artillery Firing Range</p>
+        <div class="location-actions">
+          <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Victory+Sports+Arena+North+Halishahar+Chattogram" target="_blank" rel="noopener">Get Directions</a>
+          <a class="btn btn-outline" id="callNowBtn" href="tel:+8801601669203">Call Now</a>
+          <a class="btn btn-outline" href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tight" id="contact">
+  <div class="container">
+    <p class="eyebrow">Get in touch</p>
+    <h2 class="section-title">Contact</h2>
+    <p class="section-lead">Questions about bookings, tournaments or facilities — reach out any time.</p>
+    <div class="why-grid">
+      <div class="why-card"><h4>Phone</h4><p id="contactPhone"><a href="tel:+8801601669203" style="color:inherit;">+880 1601-669203</a></p></div>
+      <div class="why-card"><h4>Facebook</h4><p><a href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener" style="color:inherit;">facebook.com/victorysportarena</a></p></div>
+      <div class="why-card"><h4>Address</h4><p>Ful Chowdhury Para, North Halishahar, Chattogram 4216</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#top" class="logo">VICTORY<span>.</span></a>
+        <p style="margin-top:16px;max-width:36ch;">Victory Sports Arena is a sports facility in North Halishahar, Chattogram, providing a dedicated environment for football, cricket, futsal and competitive sports activities.</p>
+      </div>
+      <div>
+        <h5>Explore</h5>
+        <a href="#facilities">Facilities</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="#events">Events &amp; Tournaments</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#location">Location</a>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <a href="tel:+8801601669203">+880 1601-669203</a>
+        <a href="https://www.facebook.com/victorysportarena/" target="_blank" rel="noopener">Facebook</a>
+        <a href="admin.html">Admin Login</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Victory Sports Arena. All rights reserved.</span>
+      <span>Ful Chowdhury Para, North Halishahar, Chattogram 4216</span>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal">
+    <button class="modal-close" id="closeBookingBtn" aria-label="Close">✕</button>
+    <p class="eyebrow">Booking request</p>
+    <h2 class="section-title" style="font-size:28px;margin-bottom:22px;">Book Your Slot</h2>
+    <div class="form-error-banner" id="bookingError"></div>
+    <form id="bookingForm">
+      <div class="field"><label for="bf-facility">Facility</label><select id="bf-facility" required></select></div>
+      <div class="field-row">
+        <div class="field"><label for="bf-date">Date</label><input type="date" id="bf-date" required></div>
+        <div class="field"><label for="bf-start">Start time</label><select id="bf-start" required></select></div>
+      </div>
+      <div class="field">
+        <label for="bf-duration">Duration</label>
+        <select id="bf-duration" required>
+          <option value="60">1 hour</option>
+          <option value="90">1.5 hours</option>
+          <option value="120">2 hours</option>
+        </select>
+      </div>
+      <div class="price-preview" id="pricePreview">Select a facility, date and time to see pricing</div>
+      <div class="field-row">
+        <div class="field"><label for="bf-name">Full name</label><input type="text" id="bf-name" required></div>
+        <div class="field"><label for="bf-phone">Phone number</label><input type="tel" id="bf-phone" required></div>
+      </div>
+      <div class="field"><label for="bf-team">Team / company name (optional)</label><input type="text" id="bf-team"></div>
+      <div class="field"><label for="bf-notes">Special request / notes (optional)</label><textarea id="bf-notes" rows="3"></textarea></div>
+      <button type="submit" class="btn btn-primary btn-block" id="submitBookingBtn">Submit Booking Request</button>
+      <p class="form-note">This is a request, not a confirmation. Victory Sports Arena will review and confirm your booking.</p>
+    </form>
+    <div class="form-success" id="bookingSuccess">
+      <div class="check">✓</div>
+      <h3 style="font-size:20px;text-transform:none;font-family:var(--font-body);margin-bottom:10px;">Request received</h3>
+      <p style="color:var(--text-muted);font-size:14px;">Your booking request is <strong style="color:var(--accent);">pending review</strong>. We'll contact you at the phone number provided to confirm.</p>
+      <button class="btn btn-outline" style="margin-top:20px;" id="closeSuccessBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-banner" id="demoBanner"><b>Demo mode</b> — this preview is running on placeholder data. Paste your Firebase config near the top of the page's script to connect real content.</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script>
+/* ============================================================================
+   VICTORY SPORTS ARENA — shared core
+   Included inline in index.html, admin.html and pricing.html.
+   Paste your Firebase config below to go live; until then every page runs
+   in DEMO_MODE against the in-memory dataset defined here.
+   ========================================================================= */
+
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_API_KEY_HERE",
+  authDomain: "PASTE_AUTH_DOMAIN_HERE",
+  projectId: "PASTE_PROJECT_ID_HERE",
+  storageBucket: "PASTE_STORAGE_BUCKET_HERE",
+  messagingSenderId: "PASTE_SENDER_ID_HERE",
+  appId: "PASTE_APP_ID_HERE",
+};
+const DEMO_MODE = Object.values(FIREBASE_CONFIG).some((v) => String(v).startsWith("PASTE_"));
+
+let db = null, auth = null, storage = null;
+if (!DEMO_MODE) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  storage = firebase.storage();
+}
+
+const COLLECTIONS = {
+  facilities: "facilities", pricingRules: "pricingRules", bookings: "bookings",
+  events: "events", gallery: "gallery", settings: "settings", users: "users",
+  customers: "customers", offers: "offers",
+};
+
+/* ------------------------------------------------------------- roles --- */
+const ROLES = {
+  admin:   ["dashboard","bookings","calendar","facilities","pricing","offers","events","gallery","customers","users","settings"],
+  manager: ["dashboard","bookings","calendar","facilities","pricing","offers","events","gallery","customers"],
+  staff:   ["dashboard","bookings","calendar"],
+};
+function canAccess(role, panel) { return (ROLES[role] || ROLES.staff).includes(panel); }
+
+/* ---------------------------------------------------------- utilities --- */
+function escapeHtml(str) {
+  return String(str == null ? "" : str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function newId(prefix) { return prefix + "-" + Math.random().toString(36).slice(2, 9); }
+function formatBDT(amount) { return amount == null ? "Contact for pricing" : "৳" + Number(amount).toLocaleString("en-BD"); }
+function pad2(n) { return String(n).padStart(2, "0"); }
+
+/* Generate 30-minute-increment time options, e.g. ["00:00","00:30",...,"23:30"] */
+function generateTimeSlots() {
+  const out = [];
+  for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 30) out.push(pad2(h) + ":" + pad2(m));
+  return out;
+}
+const TIME_SLOTS = generateTimeSlots();
+
+/* Combine a "YYYY-MM-DD" date + "HH:MM" time into a real Date object. */
+function combineDateTime(dateStr, timeStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const [h, mi] = timeStr.split(":").map(Number);
+  return new Date(y, m - 1, d, h, mi, 0, 0);
+}
+
+/* Compute booking start/end Date objects, correctly rolling the end time
+   to the next calendar day when the booking crosses midnight. */
+function computeBookingWindow(dateStr, startTime, durationMinutes) {
+  const start = combineDateTime(dateStr, startTime);
+  const end = new Date(start.getTime() + Number(durationMinutes) * 60000);
+  return { start, end, crossesMidnight: end.getDate() !== start.getDate() || end.getMonth() !== start.getMonth() };
+}
+
+/* Overlap check: newStart < existingEnd && newEnd > existingStart */
+function timeRangesOverlap(newStart, newEnd, existingStart, existingEnd) {
+  return newStart < existingEnd && newEnd > existingStart;
+}
+
+/* Returns true if a proposed booking conflicts with any existing (non-cancelled/
+   non-rejected) booking on the SAME facility. Different facilities never conflict. */
+function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId }) {
+  const { start: newStart, end: newEnd } = computeBookingWindow(date, startTime, duration);
+  return existingBookings.some((b) => {
+    if (b.id === excludeBookingId) return false;
+    if (b.facilityId !== facilityId) return false;
+    if (b.status === "cancelled" || b.status === "rejected") return false;
+    const { start: exStart, end: exEnd } = computeBookingWindow(b.date, b.startTime, b.duration);
+    return timeRangesOverlap(newStart, newEnd, exStart, exEnd);
+  });
+}
+
+function isWeekend(dateObj) { const day = dateObj.getDay(); return day === 5 || day === 6; } // Fri/Sat = weekend in BD
+
+/* ------------------------------------------------------------- pricing --- */
+/* pricingRules[]: { id, facilityId, dayType:'weekday'|'weekend'|'all',
+   startTime,endTime (HH:MM), duration (minutes), price, weekendPrice,
+   specialPrice, active }
+   Returns { price, rule } or { price: null, rule: null } — callers must
+   render "Contact for pricing" rather than ever guessing a number. */
+function resolvePrice({ facilityId, date, startTime, duration, rules }) {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const weekend = isWeekend(dateObj);
+  const startMin = TIME_SLOTS.indexOf(startTime) >= 0 ? hhmmToMin(startTime) : hhmmToMin(startTime);
+  const endMin = startMin + Number(duration);
+
+  const candidates = (rules || []).filter((r) => {
+    if (!r.active) return false;
+    if (r.facilityId !== facilityId) return false;
+    if (Number(r.duration) !== Number(duration)) return false;
+    if (r.dayType === "weekend" && !weekend) return false;
+    if (r.dayType === "weekday" && weekend) return false;
+    const rs = hhmmToMin(r.startTime), re = hhmmToMin(r.endTime);
+    // handle windows that cross midnight (e.g. 22:00 -> 02:00)
+    if (re <= rs) return startMin >= rs || (endMin % 1440) <= re || endMin <= 1440;
+    return startMin >= rs && endMin <= re;
+  });
+  if (!candidates.length) return { price: null, rule: null };
+
+  const withSpecial = candidates.find((r) => r.specialPrice != null && r.specialPrice !== "");
+  if (withSpecial) return { price: Number(withSpecial.specialPrice), rule: withSpecial };
+
+  const rule = candidates[0];
+  if (weekend && rule.weekendPrice != null && rule.weekendPrice !== "") return { price: Number(rule.weekendPrice), rule };
+  return { price: Number(rule.price), rule };
+}
+function hhmmToMin(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; }
+
+/* ============================================================================
+   DEMO DATASET — only used while FIREBASE_CONFIG still has placeholders.
+   Every fact here matches the verified Victory Sports Arena content brief;
+   nothing is invented. Mutated in place by admin.html's demo CRUD actions
+   so the panel can be previewed before Firebase is connected.
+   ========================================================================= */
+const DEMO = {
+  facilities: [
+    { id: "football-turf", name: "Football / Futsal Turf", sport: "Football & Futsal", description: "FIFA-certified 50mm infill grass, renovated for a professional-quality playing surface.", capacity: "", hours: "", active: true, images: [] },
+    { id: "cricket", name: "Cricket", sport: "Cricket", description: "Enjoy competitive cricket sessions in a dedicated sports environment at Victory Sports Arena.", capacity: "", hours: "", active: true, images: [] },
+  ],
+  pricingRules: [],
+  offers: [],
+  bookings: [
+    { id: "demo-bk-1", facilityId: "football-turf", facilityName: "Football / Futsal Turf", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX", date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60, price: null, status: "pending", team: null, notes: null, createdAt: new Date().toISOString() },
+  ],
+  events: [
+    { id: "demo-ev-1", name: "BKS Tournament", sport: "Football / Futsal", date: "2025-10-01", time: "", description: "Tournament held at Victory Sports Arena.", registration: "", status: "Completed" },
+  ],
+  gallery: [],
+  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram." },
+  users: [
+    { id: "demo-admin", email: "admin@victorysportsarena.com", role: "admin" },
+  ],
+};
+
+</script>
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+let facilities = [], pricingRules = [], bookings = [], events = [], gallery = [], settings = DEMO.settings;
+
+async function loadContent() {
+  if (DEMO_MODE) {
+    document.getElementById("demoBanner").classList.add("show");
+    facilities = DEMO.facilities; pricingRules = DEMO.pricingRules; bookings = DEMO.bookings;
+    events = DEMO.events; gallery = DEMO.gallery; settings = DEMO.settings;
+  } else {
+    const [facSnap, ruleSnap, bookSnap, evSnap, gallerySnap, settingsSnap] = await Promise.all([
+      db.collection(COLLECTIONS.facilities).where("active", "==", true).get(),
+      db.collection(COLLECTIONS.pricingRules).where("active", "==", true).get(),
+      db.collection(COLLECTIONS.bookings).get(),
+      db.collection(COLLECTIONS.events).orderBy("date", "desc").get(),
+      db.collection(COLLECTIONS.gallery).where("active", "==", true).get(),
+      db.collection(COLLECTIONS.settings).doc("site").get(),
+    ]);
+    facilities = facSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    pricingRules = ruleSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    bookings = bookSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    events = evSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    gallery = gallerySnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    settings = settingsSnap.exists ? settingsSnap.data() : DEMO.settings;
+  }
+  renderTicker(); renderFacilities(); renderEvents(); renderGallery(); renderContact();
+  populateBookingFacilitySelect(); populateTimeSelect();
+}
+
+function renderTicker() {
+  const items = facilities.length ? facilities.map((f) => f.sport || f.name) : ["Football", "Cricket", "Futsal"];
+  const labels = ["Now Booking", ...items, "Tournaments", "North Halishahar · Chattogram"];
+  const html = labels.map((l, i) => `<span class="${i === 0 ? "on" : ""}">${escapeHtml(l)}</span>`).join("");
+  document.getElementById("tickerTrack").innerHTML = html + html;
+}
+
+function lowestPriceFor(facilityId) {
+  const prices = pricingRules.filter((r) => r.facilityId === facilityId && r.active).map((r) => Number(r.price)).filter((p) => !isNaN(p));
+  return prices.length ? Math.min(...prices) : null;
+}
+
+function renderFacilities() {
+  const grid = document.getElementById("facilityGrid");
+  if (!facilities.length) { grid.innerHTML = `<div class="empty-state">Facilities will appear here once added from the Admin Panel.</div>`; return; }
+  grid.innerHTML = facilities.map((f) => {
+    const price = lowestPriceFor(f.id);
+    const priceLabel = price != null ? `From ${formatBDT(price)}/hr` : "Contact for pricing";
+    const hasImg = f.images && f.images[0];
+    return `<div class="facility-card">
+      <div class="facility-media"><span class="facility-tag">${escapeHtml(f.sport || "")}</span>${hasImg ? `<img src="${f.images[0]}" alt="${escapeHtml(f.name)}">` : `<span>${escapeHtml(f.name)}</span>`}</div>
+      <div class="facility-body">
+        <h3>${escapeHtml(f.name)}</h3>
+        <p>${escapeHtml(f.description || "")}</p>
+        <div class="facility-meta"><span class="price">${priceLabel}</span><span>${escapeHtml(f.capacity || "")}</span></div>
+      </div></div>`;
+  }).join("");
+}
+
+function renderEvents() {
+  const list = document.getElementById("eventsList");
+  if (!events.length) { list.innerHTML = `<div class="empty-state">No events scheduled right now — check back soon or follow our Facebook page for updates.</div>`; return; }
+  const statusClass = { "Registration Open": "status-open", "Registration Closed": "status-closed", "Upcoming": "status-upcoming", "Completed": "status-completed" };
+  list.innerHTML = events.map((e) => {
+    const d = new Date(e.date);
+    const day = isNaN(d) ? "--" : d.getDate();
+    const mon = isNaN(d) ? "" : d.toLocaleString("en", { month: "short" });
+    return `<div class="event-card">
+      <div class="event-date"><b>${day}</b><span>${mon}</span></div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:8px;">
+          <h3 style="font-size:20px;">${escapeHtml(e.name)}</h3>
+          <span class="status-pill ${statusClass[e.status] || "status-upcoming"}">${escapeHtml(e.status || "Upcoming")}</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:14px;margin:0;">${escapeHtml(e.description || "")}${e.sport ? " · " + escapeHtml(e.sport) : ""}</p>
+      </div></div>`;
+  }).join("");
+}
+
+function renderGallery(filter) {
+  const grid = document.getElementById("galleryGrid");
+  const items = filter && filter !== "all" ? gallery.filter((g) => g.category === filter) : gallery;
+  if (!items.length) { grid.innerHTML = `<div class="empty-state">Gallery photos will appear here once uploaded from the Admin Panel.</div>`; return; }
+  grid.innerHTML = items.map((g) => `<div class="g-item"><img src="${g.url}" alt="${escapeHtml(g.title || "")}" loading="lazy"></div>`).join("");
+}
+document.getElementById("galleryFilters").addEventListener("click", (e) => {
+  if (e.target.tagName !== "BUTTON") return;
+  [...document.querySelectorAll("#galleryFilters button")].forEach((b) => b.classList.remove("active"));
+  e.target.classList.add("active");
+  renderGallery(e.target.dataset.cat);
+});
+
+function renderContact() {
+  const phone = settings.phone || DEMO.settings.phone;
+  document.getElementById("contactPhone").innerHTML = `<a href="tel:${phone}" style="color:inherit;">${escapeHtml(phone)}</a>`;
+  document.getElementById("callNowBtn").href = `tel:${phone}`;
+}
+
+/* ------------------------------------------------------------- booking */
+const modal = document.getElementById("bookingModal");
+const bookingForm = document.getElementById("bookingForm");
+const bookingSuccess = document.getElementById("bookingSuccess");
+const bookingError = document.getElementById("bookingError");
+
+function openModal() { bookingForm.style.display = "block"; bookingSuccess.classList.remove("show"); bookingError.classList.remove("show"); modal.classList.add("open"); }
+function closeModal() { modal.classList.remove("open"); }
+["openBookingBtn", "openBookingBtn2", "openBookingBtn3"].forEach((id) => document.getElementById(id).addEventListener("click", openModal));
+document.getElementById("closeBookingBtn").addEventListener("click", closeModal);
+document.getElementById("closeSuccessBtn").addEventListener("click", closeModal);
+modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+function populateBookingFacilitySelect() {
+  document.getElementById("bf-facility").innerHTML = facilities.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+}
+function populateTimeSelect() {
+  document.getElementById("bf-start").innerHTML = TIME_SLOTS.map((t) => `<option value="${t}">${t}</option>`).join("");
+}
+
+function updatePricePreview() {
+  const facilityId = document.getElementById("bf-facility").value;
+  const date = document.getElementById("bf-date").value;
+  const start = document.getElementById("bf-start").value;
+  const duration = document.getElementById("bf-duration").value;
+  const el = document.getElementById("pricePreview");
+  el.classList.remove("err");
+  if (!facilityId || !date || !start) { el.innerHTML = "Select a facility, date and time to see pricing"; return; }
+
+  if (hasBookingConflict({ facilityId, date, startTime: start, duration, existingBookings: bookings })) {
+    el.innerHTML = "This time slot is already booked — please choose another time.";
+    el.classList.add("err");
+    return;
+  }
+  const { price } = resolvePrice({ facilityId, date, startTime: start, duration, rules: pricingRules });
+  const { crossesMidnight } = computeBookingWindow(date, start, duration);
+  el.innerHTML = `Estimated price: <b>${formatBDT(price)}</b>${crossesMidnight ? " · crosses into next day" : ""}`;
+}
+["bf-facility", "bf-date", "bf-start", "bf-duration"].forEach((id) => document.getElementById(id).addEventListener("change", updatePricePreview));
+
+bookingForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  bookingError.classList.remove("show");
+  const facilityId = document.getElementById("bf-facility").value;
+  const facility = facilities.find((f) => f.id === facilityId);
+  const date = document.getElementById("bf-date").value;
+  const startTime = document.getElementById("bf-start").value;
+  const duration = document.getElementById("bf-duration").value;
+
+  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings })) {
+    bookingError.textContent = "Sorry — that slot was just taken. Please pick a different time.";
+    bookingError.classList.add("show");
+    return;
+  }
+
+  const submitBtn = document.getElementById("submitBookingBtn");
+  submitBtn.disabled = true; submitBtn.textContent = "Submitting…";
+  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules });
+  const { crossesMidnight } = computeBookingWindow(date, startTime, duration);
+
+  const booking = {
+    facilityId, facilityName: facility ? facility.name : "",
+    date, startTime, duration: Number(duration), crossesMidnight, price,
+    customerName: document.getElementById("bf-name").value,
+    phone: document.getElementById("bf-phone").value,
+    team: document.getElementById("bf-team").value || null,
+    notes: document.getElementById("bf-notes").value || null,
+    status: "pending",
+    createdAt: DEMO_MODE ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  try {
+    if (!DEMO_MODE) {
+      await db.runTransaction(async (tx) => {
+        const snap = await tx.get(db.collection(COLLECTIONS.bookings).where("facilityId", "==", facilityId).where("date", "==", date));
+        const conflicting = snap.docs.map((d) => d.data()).filter((b) => b.status !== "cancelled" && b.status !== "rejected");
+        if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: conflicting })) {
+          throw new Error("CONFLICT");
+        }
+        tx.set(db.collection(COLLECTIONS.bookings).doc(), booking);
+      });
+      // upsert a lightweight customer record
+      const custRef = db.collection(COLLECTIONS.customers).doc(booking.phone.replace(/\D/g, ""));
+      await custRef.set({ name: booking.customerName, phone: booking.phone, lastBookingAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    } else {
+      bookings.push({ id: newId("bk"), ...booking, createdAt: new Date().toISOString() });
+    }
+    bookingForm.style.display = "none";
+    bookingSuccess.classList.add("show");
+  } catch (err) {
+    if (err && err.message === "CONFLICT") {
+      bookingError.textContent = "Sorry — that slot was just taken. Please pick a different time.";
+    } else {
+      bookingError.textContent = "Something went wrong submitting your request. Please call us directly at " + (settings.phone || DEMO.settings.phone) + ".";
+      console.error(err);
+    }
+    bookingError.classList.add("show");
+  } finally {
+    submitBtn.disabled = false; submitBtn.textContent = "Submit Booking Request";
+  }
+});
+
+loadContent();
+
+</script>
+</body>
+</html>
