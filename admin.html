@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Victory Sports Arena</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  --bg: #0a0d12;
+  --bg-elevated: #12161d;
+  --bg-elevated-2: #1a212b;
+  --line: #232b36;
+  --text: #eef2f6;
+  --text-muted: #8d97a6;
+  --accent: #2ef98a;
+  --accent-dim: #1c8f52;
+  --accent-ink: #04140b;
+  --danger: #ff5c5c;
+  --warning: #ffc107;
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --container: 1180px;
+  --radius: 4px;
+  --radius-lg: 10px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 10px; margin: 0 0 14px; }
+.eyebrow::before { content: ''; width: 22px; height: 2px; background: var(--accent); display: inline-block; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .01em; font-weight: 400; margin: 0; line-height: 1.05; }
+h2.section-title { font-size: clamp(32px, 4.4vw, 52px); margin-bottom: 12px; }
+p.section-lead { color: var(--text-muted); max-width: 60ch; font-size: 16px; margin: 0 0 40px; }
+button, .btn { font-family: var(--font-body); font-weight: 700; font-size: 14px; letter-spacing: .03em; text-transform: uppercase; border-radius: var(--radius); border: none; cursor: pointer; padding: 15px 28px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; transition: transform .15s ease, background .15s ease, border-color .15s ease; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { transform: translateY(-2px); background: #4bffa1; }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--line); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 9px 16px; font-size: 12px; }
+
+/* header */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,13,18,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; height: 76px; }
+.logo { font-family: var(--font-display); font-size: 22px; letter-spacing: .03em; text-transform: uppercase; }
+.logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 28px; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.nav-links a { color: var(--text-muted); transition: color .15s; }
+.nav-links a:hover, .nav-links a.current { color: var(--text); }
+.header-cta { display: flex; align-items: center; gap: 16px; }
+.nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 26px; padding: 4px; }
+@media (max-width: 860px) { .nav-links { display: none; } .header-cta .btn-outline { display: none; } .nav-toggle { display: block; } }
+
+/* hero */
+.hero { position: relative; min-height: 90svh; display: flex; align-items: center; overflow: hidden; padding-top: 76px; background: radial-gradient(120% 100% at 80% 0%, #0f1a14 0%, var(--bg) 55%); }
+.hero-pitch-lines { position: absolute; inset: 0; z-index: 0; opacity: .5; pointer-events: none; }
+.hero-content { position: relative; z-index: 2; max-width: 760px; padding: 70px 0 50px; }
+.hero h1 { font-size: clamp(40px, 7vw, 78px); margin-bottom: 20px; }
+.hero h1 .accent-line { color: var(--accent); display: block; }
+.hero-lead { font-size: 18px; color: var(--text-muted); max-width: 46ch; margin-bottom: 32px; }
+.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero.small { min-height: 46vh; }
+
+.ticker { position: relative; z-index: 2; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-elevated); overflow: hidden; white-space: nowrap; }
+.ticker-track { display: inline-flex; animation: ticker-scroll 28s linear infinite; padding: 14px 0; }
+.ticker-track span { font-family: var(--font-mono); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-muted); padding: 0 28px; border-right: 1px solid var(--line); }
+.ticker-track span.on { color: var(--accent); }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+section { padding: 90px 0; }
+section.tight { padding: 60px 0; }
+.section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 24px; }
+.facility-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; transition: border-color .2s, transform .2s; display: flex; flex-direction: column; }
+.facility-card:hover { border-color: var(--accent-dim); transform: translateY(-4px); }
+.facility-media { aspect-ratio: 16/10; background: linear-gradient(135deg,#16321f,#0e1319); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; position: relative; }
+.facility-media img { width: 100%; height: 100%; object-fit: cover; }
+.facility-tag { position: absolute; top: 14px; left: 14px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 3px; }
+.facility-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.facility-body h3 { font-size: 22px; }
+.facility-body p { color: var(--text-muted); font-size: 14px; margin: 0; flex: 1; }
+.facility-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; }
+.facility-meta .price { color: var(--accent); font-weight: 700; }
+
+.why-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.why-card { background: var(--bg-elevated); padding: 30px 24px; }
+.why-num { font-family: var(--font-mono); color: var(--accent); font-size: 13px; margin-bottom: 16px; display: block; }
+.why-card h4 { font-size: 19px; text-transform: none; margin-bottom: 8px; font-family: var(--font-body); font-weight: 800; }
+.why-card p { color: var(--text-muted); font-size: 14px; margin: 0; }
+
+.turf-highlight { background: linear-gradient(120deg, var(--bg-elevated) 0%, #101d15 100%); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 50px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 36px; align-items: center; }
+.turf-highlight .stat-strip { display: flex; gap: 26px; margin-top: 24px; flex-wrap: wrap; }
+.turf-highlight .stat { font-family: var(--font-mono); }
+.turf-highlight .stat b { display: block; color: var(--accent); font-size: 22px; }
+.turf-highlight .stat span { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.turf-visual { aspect-ratio: 4/3; border-radius: var(--radius); background: repeating-linear-gradient(90deg,#143621 0 40px,#123020 40px 80px); position: relative; overflow: hidden; }
+@media (max-width: 800px) { .turf-highlight { grid-template-columns: 1fr; padding: 30px; } }
+
+.booking-cta { background: var(--bg-elevated); border: 1px solid var(--accent-dim); border-radius: var(--radius-lg); padding: 50px; text-align: center; }
+.booking-cta h2 { margin-bottom: 14px; }
+.booking-cta p { color: var(--text-muted); max-width: 50ch; margin: 0 auto 28px; }
+
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(5,7,10,.8); display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); max-width: 560px; width: 100%; max-height: 88vh; overflow-y: auto; padding: 34px; margin: auto; }
+.modal.wide { max-width: 760px; }
+.modal-close { float: right; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; }
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); margin-bottom: 7px; font-weight: 600; }
+.field input, .field select, .field textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--text); padding: 11px 14px; border-radius: var(--radius); font-family: var(--font-body); font-size: 14px; }
+.field input:focus, .field select:focus, .field textarea:focus, button:focus-visible, .btn:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.price-preview { font-family: var(--font-mono); background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px; text-align: center; margin-bottom: 18px; }
+.price-preview b { color: var(--accent); font-size: 20px; }
+.price-preview.err { border-color: var(--danger); color: var(--danger); }
+.form-note { font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center; }
+.form-success { display: none; text-align: center; padding: 20px 0; }
+.form-success.show { display: block; }
+.form-success .check { font-size: 44px; color: var(--accent); margin-bottom: 14px; }
+.form-error-banner { display: none; background: rgba(255,92,92,.12); border: 1px solid var(--danger); color: var(--danger); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; margin-bottom: 16px; }
+.form-error-banner.show { display: block; }
+
+.event-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px; display: flex; gap: 20px; align-items: flex-start; }
+.event-date { font-family: var(--font-mono); text-align: center; min-width: 70px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 8px; }
+.event-date b { display: block; font-size: 22px; color: var(--accent); }
+.event-date span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+.status-pill, .badge { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 4px 10px; border-radius: 20px; display: inline-block; }
+.status-open, .badge-confirmed, .badge-active { background: rgba(46,249,138,.14); color: var(--accent); }
+.status-closed, .badge-rejected, .badge-cancelled { background: rgba(255,92,92,.14); color: var(--danger); }
+.status-upcoming, .badge-inactive { background: rgba(141,151,166,.16); color: var(--text-muted); }
+.status-completed { background: rgba(141,151,166,.1); color: var(--text-muted); }
+.badge-pending { background: rgba(255,193,7,.14); color: var(--warning); }
+.badge-manager { background: rgba(46,249,138,.1); color: #7fe9ab; }
+.badge-staff { background: rgba(141,151,166,.14); color: var(--text-muted); }
+.badge-admin { background: rgba(46,249,138,.2); color: var(--accent); }
+
+.empty-state { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 44px; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+.gallery-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
+.gallery-filters button { background: transparent; border: 1px solid var(--line); color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 12px; }
+.gallery-filters button.active { border-color: var(--accent); color: var(--accent); }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 14px; }
+.gallery-grid .g-item { aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; background: var(--bg-elevated); position: relative; }
+.gallery-grid .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.gallery-grid .g-item:hover img { transform: scale(1.06); }
+
+.location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.location-map { aspect-ratio: 4/3; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 13px; text-align: center; padding: 20px; }
+.location-details p { color: var(--text-muted); margin: 0 0 22px; }
+.location-details .addr { font-size: 18px; color: var(--text); font-weight: 600; margin-bottom: 6px; }
+.location-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+@media (max-width: 800px) { .location-grid { grid-template-columns: 1fr; } }
+
+footer { border-top: 1px solid var(--line); padding: 50px 0 28px; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; margin-bottom: 36px; }
+.footer-grid h5 { font-family: var(--font-body); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); margin: 0 0 16px; }
+.footer-grid a, .footer-grid p { color: var(--text-muted); font-size: 14px; display: block; margin-bottom: 10px; }
+.footer-grid a:hover { color: var(--accent); }
+.footer-bottom { border-top: 1px solid var(--line); padding-top: 22px; display: flex; justify-content: space-between; color: var(--text-muted); font-size: 12px; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr; } }
+
+.demo-banner { position: fixed; bottom: 0; left: 0; right: 0; z-index: 150; background: #1a212b; border-top: 1px solid var(--accent-dim); color: var(--text-muted); font-family: var(--font-mono); font-size: 12px; text-align: center; padding: 10px; display: none; }
+.demo-banner.show { display: block; }
+.demo-banner b { color: var(--accent); }
+
+/* pricing page specific */
+.pricing-table-wrap { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 34px; }
+.pricing-table-wrap h3 { font-family: var(--font-body); font-weight: 800; text-transform: none; font-size: 18px; padding: 20px 22px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.pricing-table { width: 100%; border-collapse: collapse; }
+.pricing-table th, .pricing-table td { text-align: left; padding: 13px 22px; font-size: 14px; border-bottom: 1px solid var(--line); }
+.pricing-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; background: var(--bg-elevated-2); }
+.pricing-table tr:last-child td { border-bottom: none; }
+.pricing-table .price-cell { font-family: var(--font-mono); color: var(--accent); font-weight: 700; }
+.offer-strip { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; }
+.offer-card { min-width: 220px; background: var(--bg-elevated); border: 1px solid var(--accent-dim); border-radius: var(--radius-lg); padding: 20px; }
+.offer-card b { color: var(--accent); font-family: var(--font-mono); font-size: 20px; display: block; margin-bottom: 6px; }
+
+/* ============================================================ ADMIN ============================================================ */
+body.admin-body { display: flex; min-height: 100vh; }
+.login-screen { min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(120% 100% at 50% 0%, #0f1a14 0%, var(--bg) 60%); padding: 24px; }
+.login-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 44px; width: 100%; max-width: 380px; }
+.login-card .logo { display: block; text-align: center; font-size: 26px; margin-bottom: 6px; }
+.login-card .eyebrow { justify-content: center; margin-bottom: 26px; }
+.login-error { color: var(--danger); font-size: 13px; margin: -6px 0 16px; display: none; }
+.login-error.show { display: block; }
+
+.sidebar { width: 240px; flex-shrink: 0; background: var(--bg-elevated); border-right: 1px solid var(--line); min-height: 100vh; display: flex; flex-direction: column; position: sticky; top: 0; }
+.sidebar .logo-wrap { padding: 24px 22px; border-bottom: 1px solid var(--line); }
+.sidebar-nav { flex: 1; padding: 14px 12px; overflow-y: auto; }
+.sidebar-nav button { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: none; color: var(--text-muted); text-transform: none; font-weight: 600; font-size: 14px; letter-spacing: 0; padding: 12px 14px; border-radius: var(--radius); text-align: left; cursor: pointer; margin-bottom: 2px; }
+.sidebar-nav button:hover { background: var(--bg-elevated-2); color: var(--text); }
+.sidebar-nav button.active { background: var(--bg-elevated-2); color: var(--accent); }
+.sidebar-foot { padding: 16px 22px; border-top: 1px solid var(--line); }
+.sidebar-foot .user-email { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; word-break: break-all; }
+.sidebar-foot .user-role { margin-bottom: 12px; }
+
+.admin-main { flex: 1; min-width: 0; }
+.admin-topbar { height: 68px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 30px; position: sticky; top: 0; background: var(--bg); z-index: 5; }
+.admin-topbar h2 { font-size: 20px; text-transform: none; font-family: var(--font-body); font-weight: 800; }
+.admin-content { padding: 30px; max-width: 1240px; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr)); gap: 16px; margin-bottom: 30px; }
+.stat-card { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; }
+.stat-card .num { font-family: var(--font-mono); font-size: 28px; color: var(--accent); }
+.stat-card .lbl { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; margin-top: 6px; }
+
+.data-table { width: 100%; border-collapse: collapse; background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.data-table th, .data-table td { text-align: left; padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--line); }
+.data-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; background: var(--bg-elevated-2); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table td.actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.data-table tbody tr:hover { background: rgba(255,255,255,.02); }
+
+.mini-btn { font-family: var(--font-body); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 6px 10px; border-radius: var(--radius); border: 1px solid var(--line); background: transparent; color: var(--text-muted); cursor: pointer; }
+.mini-btn.approve { border-color: var(--accent-dim); color: var(--accent); }
+.mini-btn.reject { border-color: #5c2222; color: var(--danger); }
+.mini-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 14px; flex-wrap: wrap; }
+.toolbar h2 { font-size: 22px; text-transform: none; font-family: var(--font-body); font-weight: 800; }
+.toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.filter-bar input, .filter-bar select { background: var(--bg-elevated); border: 1px solid var(--line); color: var(--text); padding: 9px 12px; border-radius: var(--radius); font-size: 13px; }
+
+.coming-soon { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 56px 30px; text-align: center; color: var(--text-muted); }
+.coming-soon h3 { font-family: var(--font-body); font-weight: 800; text-transform: none; font-size: 18px; color: var(--text); margin-bottom: 10px; }
+
+/* calendar */
+.calendar-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.calendar-tabs button { background: var(--bg-elevated); border: 1px solid var(--line); color: var(--text-muted); padding: 9px 18px; border-radius: 20px; font-size: 12px; }
+.calendar-tabs button.active { border-color: var(--accent); color: var(--accent); }
+.calendar-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.calendar-nav .cal-label { font-family: var(--font-mono); font-size: 14px; min-width: 180px; text-align: center; }
+.month-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.month-grid .dow { background: var(--bg-elevated-2); padding: 10px; text-align: center; font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: .06em; }
+.month-grid .day-cell { background: var(--bg-elevated); min-height: 84px; padding: 8px; cursor: pointer; font-size: 13px; position: relative; }
+.month-grid .day-cell:hover { background: var(--bg-elevated-2); }
+.month-grid .day-cell.other-month { opacity: .3; }
+.month-grid .day-cell.today { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.month-grid .day-cell .count { position: absolute; bottom: 8px; right: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: rgba(46,249,138,.12); padding: 2px 7px; border-radius: 10px; }
+.week-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 10px; }
+.week-col { background: var(--bg-elevated); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; min-height: 160px; }
+.week-col .wc-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-align: center; }
+.week-col .wc-item, .day-view-item { background: var(--bg-elevated-2); border-radius: var(--radius); padding: 8px 10px; font-size: 12px; margin-bottom: 6px; }
+.day-view-list { display: flex; flex-direction: column; gap: 8px; }
+.day-view-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; font-size: 13px; }
+
+/* gallery admin */
+.upload-drop { border: 2px dashed var(--line); border-radius: var(--radius-lg); padding: 30px; text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 22px; }
+.upload-drop input { margin-top: 12px; }
+.admin-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 12px; }
+.admin-gallery-grid .ag-item { position: relative; aspect-ratio: 1; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.admin-gallery-grid .ag-item img { width: 100%; height: 100%; object-fit: cover; }
+.admin-gallery-grid .ag-item .ag-overlay { position: absolute; inset: 0; background: rgba(5,7,10,.75); opacity: 0; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.admin-gallery-grid .ag-item:hover .ag-overlay { opacity: 1; }
+.admin-gallery-grid .ag-cat { position: absolute; top: 6px; left: 6px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; }
+
+@media (max-width: 900px) {
+  .sidebar { position: fixed; left: -240px; z-index: 50; transition: left .2s; }
+  .sidebar.open { left: 0; }
+  .admin-content { padding: 18px; }
+  .month-grid .day-cell { min-height: 56px; font-size: 11px; }
+  .week-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body class="admin-body">
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <a href="index.html" class="logo">VICTORY<span>.</span></a>
+    <p class="eyebrow">Admin panel</p>
+    <div class="login-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="field"><label for="li-email">Email</label><input type="email" id="li-email" required></div>
+      <div class="field"><label for="li-password">Password</label><input type="password" id="li-password" required></div>
+      <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign In</button>
+    </form>
+    <p class="form-note" id="demoLoginNote" style="display:none;">Demo mode — paste your Firebase config near the top of the page's script and create an admin user (Authentication + a matching <code>users/{uid}</code> doc with <code>role: "admin"</code>) to enable real login. Use the button below to preview the dashboard meanwhile.</p>
+    <button class="btn btn-outline btn-block" id="demoEnterBtn" style="display:none;margin-top:12px;">Preview Dashboard (Demo Data)</button>
+  </div>
+</div>
+
+<div id="dashboardShell" style="display:none;">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo-wrap"><a href="index.html" class="logo">VICTORY<span>.</span></a></div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <button data-panel="panel-dashboard" data-perm="dashboard" class="active">◆ Dashboard</button>
+      <button data-panel="panel-bookings" data-perm="bookings">◆ Bookings</button>
+      <button data-panel="panel-calendar" data-perm="calendar">◆ Calendar</button>
+      <button data-panel="panel-facilities" data-perm="facilities">◆ Facilities</button>
+      <button data-panel="panel-pricing" data-perm="pricing">◆ Pricing</button>
+      <button data-panel="panel-offers" data-perm="offers">◆ Offers</button>
+      <button data-panel="panel-events" data-perm="events">◆ Events</button>
+      <button data-panel="panel-gallery" data-perm="gallery">◆ Gallery</button>
+      <button data-panel="panel-customers" data-perm="customers">◆ Customers</button>
+      <button data-panel="panel-users" data-perm="users">◆ Users</button>
+      <button data-panel="panel-settings" data-perm="settings">◆ Settings</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="user-email" id="userEmail"></div>
+      <div class="user-role"><span class="badge" id="userRoleBadge">admin</span></div>
+      <button class="btn btn-outline btn-block" id="logoutBtn">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <h2 id="topbarTitle">Dashboard</h2>
+      <a href="index.html" class="btn btn-outline" target="_blank">View Site ↗</a>
+    </div>
+    <div class="admin-content">
+
+      <!-- DASHBOARD -->
+      <section class="panel active" id="panel-dashboard">
+        <div class="stat-cards">
+          <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total Bookings</div></div>
+          <div class="stat-card"><div class="num" id="statPending">0</div><div class="lbl">Pending</div></div>
+          <div class="stat-card"><div class="num" id="statConfirmed">0</div><div class="lbl">Confirmed</div></div>
+          <div class="stat-card"><div class="num" id="statToday">0</div><div class="lbl">Today's Bookings</div></div>
+          <div class="stat-card"><div class="num" id="statRevenue">৳0</div><div class="lbl">Revenue (Confirmed)</div></div>
+        </div>
+        <div class="toolbar"><h2>Facility Stats</h2></div>
+        <table class="data-table" id="facilityStatsTable" style="margin-bottom:30px;">
+          <thead><tr><th>Facility</th><th>Total Bookings</th><th>Confirmed</th><th>Pending</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="toolbar"><h2>Recent Booking Requests</h2></div>
+        <table class="data-table" id="recentBookingsTable">
+          <thead><tr><th>Customer</th><th>Facility</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- BOOKINGS -->
+      <section class="panel" id="panel-bookings">
+        <div class="toolbar"><h2>Bookings</h2><div class="toolbar-actions"><button class="btn btn-primary" id="addManualBookingBtn">+ Manual Booking</button></div></div>
+        <div class="filter-bar">
+          <input type="text" id="bookingSearch" placeholder="Search name or phone…">
+          <select id="bookingStatusFilter"><option value="">All statuses</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select>
+          <select id="bookingFacilityFilter"><option value="">All facilities</option></select>
+          <input type="date" id="bookingDateFilter">
+        </div>
+        <table class="data-table" id="bookingsTable">
+          <thead><tr><th>Customer</th><th>Phone</th><th>Facility</th><th>Date / Time</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- CALENDAR -->
+      <section class="panel" id="panel-calendar">
+        <div class="toolbar"><h2>Calendar</h2></div>
+        <div class="calendar-tabs">
+          <button class="active" data-view="month">Month</button>
+          <button data-view="week">Week</button>
+          <button data-view="day">Day</button>
+        </div>
+        <div class="calendar-nav">
+          <button class="btn btn-outline btn-sm" id="calPrev">← Prev</button>
+          <span class="cal-label" id="calLabel"></span>
+          <button class="btn btn-outline btn-sm" id="calNext">Next →</button>
+          <button class="btn btn-outline btn-sm" id="calToday">Today</button>
+        </div>
+        <div id="calendarBody"></div>
+      </section>
+
+      <!-- FACILITIES -->
+      <section class="panel" id="panel-facilities">
+        <div class="toolbar"><h2>Facilities</h2><button class="btn btn-primary" id="addFacilityBtn">+ Add Facility</button></div>
+        <table class="data-table" id="facilitiesTable">
+          <thead><tr><th>Name</th><th>Sport</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- PRICING -->
+      <section class="panel" id="panel-pricing">
+        <div class="toolbar"><h2>Pricing Rules</h2><button class="btn btn-primary" id="addPricingBtn">+ Add Pricing Rule</button></div>
+        <p class="section-lead" style="margin-bottom:20px;">Prices on the public site and pricing page are calculated live from these rules. If nothing matches, "Contact for pricing" is shown — nothing is ever guessed.</p>
+        <table class="data-table" id="pricingTable">
+          <thead><tr><th>Label</th><th>Facility</th><th>Applies to</th><th>Time Window</th><th>Duration</th><th>Price</th><th>Weekend</th><th>Special</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- OFFERS -->
+      <section class="panel" id="panel-offers">
+        <div class="toolbar"><h2>Offers</h2><button class="btn btn-primary" id="addOfferBtn">+ Add Offer</button></div>
+        <table class="data-table" id="offersTable">
+          <thead><tr><th>Title</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- EVENTS -->
+      <section class="panel" id="panel-events">
+        <div class="toolbar"><h2>Events &amp; Tournaments</h2><button class="btn btn-primary" id="addEventBtn">+ Add Event</button></div>
+        <table class="data-table" id="eventsTable">
+          <thead><tr><th>Name</th><th>Sport</th><th>Date</th><th>Status</th><th>Published</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- GALLERY -->
+      <section class="panel" id="panel-gallery">
+        <div class="toolbar"><h2>Gallery</h2></div>
+        <div class="upload-drop">
+          Upload a photo (JPG/PNG). Files are stored in Firebase Storage under <code>gallery/</code>.
+          <div class="field-row" style="margin-top:14px;max-width:520px;margin-left:auto;margin-right:auto;">
+            <div class="field" style="margin-bottom:0;"><label for="gal-title">Title</label><input type="text" id="gal-title" placeholder="e.g. Night match"></div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="gal-category">Category</label>
+              <select id="gal-category"><option>Football</option><option>Cricket</option><option>Futsal</option><option>Tournament</option><option>Facility</option><option>Events</option></select>
+            </div>
+          </div>
+          <input type="file" id="gal-file" accept="image/*">
+          <div style="margin-top:14px;"><button class="btn btn-primary btn-sm" id="galUploadBtn">Upload Image</button></div>
+        </div>
+        <div class="admin-gallery-grid" id="adminGalleryGrid"></div>
+      </section>
+
+      <!-- CUSTOMERS -->
+      <section class="panel" id="panel-customers">
+        <div class="toolbar"><h2>Customers</h2></div>
+        <div class="filter-bar"><input type="text" id="customerSearch" placeholder="Search name or phone…"></div>
+        <table class="data-table" id="customersTable">
+          <thead><tr><th>Name</th><th>Phone</th><th>Total Bookings</th><th>Last Booking</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- USERS -->
+      <section class="panel" id="panel-users">
+        <div class="toolbar"><h2>Staff Users</h2><button class="btn btn-primary" id="addUserBtn">+ Add User</button></div>
+        <p class="section-lead" style="margin-bottom:20px;">Admin: full access. Manager: everything except Users. Staff: Dashboard, Bookings and Calendar only.</p>
+        <table class="data-table" id="usersTable">
+          <thead><tr><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="panel" id="panel-settings">
+        <div class="toolbar"><h2>Site Settings</h2></div>
+        <form id="settingsForm" style="max-width:480px;">
+          <div class="field"><label for="st-phone">Public phone number</label><input type="tel" id="st-phone"></div>
+          <div class="field"><label for="st-address">Address</label><textarea id="st-address" rows="2"></textarea></div>
+          <div class="field"><label for="st-facebook">Facebook URL</label><input type="url" id="st-facebook"></div>
+          <div class="field"><label for="st-hours">Opening hours</label><input type="text" id="st-hours" placeholder="e.g. 6:00 AM – 11:00 PM"></div>
+          <div class="field"><label for="st-hero">Hero supporting text</label><textarea id="st-hero" rows="2"></textarea></div>
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+          <span id="settingsSaved" style="color:var(--accent);font-size:13px;margin-left:12px;display:none;">Saved ✓</span>
+        </form>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- FACILITY MODAL -->
+<div class="modal-overlay" id="facilityModal"><div class="modal">
+  <button class="modal-close" data-close-modal="facilityModal">✕</button>
+  <p class="eyebrow" id="facilityModalTitle">Add Facility</p>
+  <form id="facilityForm">
+    <input type="hidden" id="fm-id">
+    <div class="field"><label for="fm-name">Facility name</label><input type="text" id="fm-name" required></div>
+    <div class="field"><label for="fm-sport">Sport</label><input type="text" id="fm-sport" required placeholder="e.g. Football, Cricket, Futsal"></div>
+    <div class="field"><label for="fm-description">Description</label><textarea id="fm-description" rows="3"></textarea></div>
+    <div class="field-row">
+      <div class="field"><label for="fm-capacity">Capacity (optional)</label><input type="text" id="fm-capacity"></div>
+      <div class="field"><label for="fm-hours">Opening hours (optional)</label><input type="text" id="fm-hours"></div>
+    </div>
+    <div class="field"><label for="fm-active">Status</label><select id="fm-active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+    <button type="submit" class="btn btn-primary btn-block">Save Facility</button>
+  </form>
+</div></div>
+
+<!-- PRICING MODAL -->
+<div class="modal-overlay" id="pricingModal"><div class="modal">
+  <button class="modal-close" data-close-modal="pricingModal">✕</button>
+  <p class="eyebrow">Pricing Rule</p>
+  <form id="pricingForm">
+    <input type="hidden" id="pm-id">
+    <div class="field"><label for="pm-label">Label (optional)</label><input type="text" id="pm-label" placeholder="e.g. Peak Hours, Night Rate, Off-Peak"></div>
+    <div class="field"><label for="pm-facility">Facility</label><select id="pm-facility" required></select></div>
+    <div class="field"><label for="pm-daytype">Applies to</label><select id="pm-daytype"><option value="all">All days</option><option value="weekday">Weekdays</option><option value="weekend">Weekend (Fri–Sat)</option></select></div>
+    <div class="field-row">
+      <div class="field"><label for="pm-start">Start time</label><select id="pm-start" required></select></div>
+      <div class="field"><label for="pm-end">End time</label><select id="pm-end" required></select></div>
+    </div>
+    <div class="field"><label for="pm-duration">Booking duration</label><select id="pm-duration"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
+    <div class="field-row">
+      <div class="field"><label for="pm-price">Price (৳)</label><input type="number" id="pm-price" required min="0"></div>
+      <div class="field"><label for="pm-weekend">Weekend price (optional)</label><input type="number" id="pm-weekend" min="0"></div>
+    </div>
+    <div class="field"><label for="pm-special">Special / holiday price (optional)</label><input type="number" id="pm-special" min="0"></div>
+    <div class="field"><label for="pm-active">Status</label><select id="pm-active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+    <button type="submit" class="btn btn-primary btn-block">Save Pricing Rule</button>
+  </form>
+</div></div>
+
+<!-- OFFER MODAL -->
+<div class="modal-overlay" id="offerModal"><div class="modal">
+  <button class="modal-close" data-close-modal="offerModal">✕</button>
+  <p class="eyebrow">Offer</p>
+  <form id="offerForm">
+    <input type="hidden" id="om-id">
+    <div class="field"><label for="om-title">Title</label><input type="text" id="om-title" required></div>
+    <div class="field"><label for="om-description">Description</label><textarea id="om-description" rows="3"></textarea></div>
+    <div class="field"><label for="om-active">Status</label><select id="om-active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+    <button type="submit" class="btn btn-primary btn-block">Save Offer</button>
+  </form>
+</div></div>
+
+<!-- EVENT MODAL -->
+<div class="modal-overlay" id="eventModal"><div class="modal">
+  <button class="modal-close" data-close-modal="eventModal">✕</button>
+  <p class="eyebrow">Event</p>
+  <form id="eventForm">
+    <input type="hidden" id="em-id">
+    <div class="field"><label for="em-name">Event name</label><input type="text" id="em-name" required></div>
+    <div class="field"><label for="em-sport">Sport</label><input type="text" id="em-sport"></div>
+    <div class="field-row">
+      <div class="field"><label for="em-date">Date</label><input type="date" id="em-date" required></div>
+      <div class="field"><label for="em-time">Start time</label><select id="em-time"></select></div>
+    </div>
+    <div class="field"><label for="em-description">Description</label><textarea id="em-description" rows="3"></textarea></div>
+    <div class="field"><label for="em-registration">Registration info (optional)</label><input type="text" id="em-registration"></div>
+    <div class="field"><label for="em-status">Status</label>
+      <select id="em-status"><option>Upcoming</option><option>Registration Open</option><option>Registration Closed</option><option>Completed</option></select>
+    </div>
+    <div class="field"><label for="em-published">Published</label><select id="em-published"><option value="true">Published</option><option value="false">Unpublished (hidden from site)</option></select></div>
+    <button type="submit" class="btn btn-primary btn-block">Save Event</button>
+  </form>
+</div></div>
+
+<!-- BOOKING (manual / edit) MODAL -->
+<div class="modal-overlay" id="bookingModal"><div class="modal">
+  <button class="modal-close" data-close-modal="bookingModal">✕</button>
+  <p class="eyebrow" id="bookingModalTitle">Manual Booking</p>
+  <div class="form-error-banner" id="bookingFormError"></div>
+  <form id="adminBookingForm">
+    <input type="hidden" id="bm-id">
+    <div class="field"><label for="bm-facility">Facility</label><select id="bm-facility" required></select></div>
+    <div class="field-row">
+      <div class="field"><label for="bm-date">Date</label><input type="date" id="bm-date" required></div>
+      <div class="field"><label for="bm-start">Start time</label><select id="bm-start" required></select></div>
+    </div>
+    <div class="field"><label for="bm-duration">Duration</label><select id="bm-duration"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
+    <div class="price-preview" id="bmPricePreview">Select facility, date and time</div>
+    <div class="field-row">
+      <div class="field"><label for="bm-name">Customer name</label><input type="text" id="bm-name" required></div>
+      <div class="field"><label for="bm-phone">Phone</label><input type="tel" id="bm-phone" required></div>
+    </div>
+    <div class="field"><label for="bm-status">Status</label><select id="bm-status"><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select></div>
+    <div class="field"><label for="bm-notes">Notes (optional)</label><textarea id="bm-notes" rows="2"></textarea></div>
+    <button type="submit" class="btn btn-primary btn-block">Save Booking</button>
+  </form>
+</div></div>
+
+<!-- BOOKING DETAILS MODAL -->
+<div class="modal-overlay" id="bookingDetailsModal"><div class="modal">
+  <button class="modal-close" data-close-modal="bookingDetailsModal">✕</button>
+  <p class="eyebrow">Booking Details</p>
+  <div id="bookingDetailsBody"></div>
+</div></div>
+
+<!-- CUSTOMER HISTORY MODAL -->
+<div class="modal-overlay" id="customerModal"><div class="modal wide">
+  <button class="modal-close" data-close-modal="customerModal">✕</button>
+  <p class="eyebrow">Customer History</p>
+  <div id="customerHistoryBody"></div>
+</div></div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="userModal"><div class="modal">
+  <button class="modal-close" data-close-modal="userModal">✕</button>
+  <p class="eyebrow">Add Staff User</p>
+  <div class="form-error-banner" id="userFormError"></div>
+  <form id="userForm">
+    <div class="field"><label for="um-email">Email</label><input type="email" id="um-email" required></div>
+    <div class="field"><label for="um-password">Temporary password</label><input type="password" id="um-password" required minlength="6"></div>
+    <div class="field"><label for="um-role">Role</label><select id="um-role"><option value="staff">Staff</option><option value="manager">Manager</option><option value="admin">Admin</option></select></div>
+    <button type="submit" class="btn btn-primary btn-block">Create User</button>
+    <p class="form-note">The new user can sign in immediately with this email/password. Ask them to change the password after first login.</p>
+  </form>
+</div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script>
+/* ============================================================================
+   VICTORY SPORTS ARENA — shared core
+   Included inline in index.html, admin.html and pricing.html.
+   Paste your Firebase config below to go live; until then every page runs
+   in DEMO_MODE against the in-memory dataset defined here.
+   ========================================================================= */
+
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_API_KEY_HERE",
+  authDomain: "PASTE_AUTH_DOMAIN_HERE",
+  projectId: "PASTE_PROJECT_ID_HERE",
+  storageBucket: "PASTE_STORAGE_BUCKET_HERE",
+  messagingSenderId: "PASTE_SENDER_ID_HERE",
+  appId: "PASTE_APP_ID_HERE",
+};
+const DEMO_MODE = Object.values(FIREBASE_CONFIG).some((v) => String(v).startsWith("PASTE_"));
+
+let db = null, auth = null, storage = null;
+if (!DEMO_MODE) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+  db = firebase.firestore();
+  auth = firebase.auth();
+  storage = firebase.storage();
+}
+
+const COLLECTIONS = {
+  facilities: "facilities", pricingRules: "pricingRules", bookings: "bookings",
+  events: "events", gallery: "gallery", settings: "settings", users: "users",
+  customers: "customers", offers: "offers",
+};
+
+/* ------------------------------------------------------------- roles --- */
+const ROLES = {
+  admin:   ["dashboard","bookings","calendar","facilities","pricing","offers","events","gallery","customers","users","settings"],
+  manager: ["dashboard","bookings","calendar","facilities","pricing","offers","events","gallery","customers"],
+  staff:   ["dashboard","bookings","calendar"],
+};
+function canAccess(role, panel) { return (ROLES[role] || ROLES.staff).includes(panel); }
+
+/* ---------------------------------------------------------- utilities --- */
+function escapeHtml(str) {
+  return String(str == null ? "" : str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function newId(prefix) { return prefix + "-" + Math.random().toString(36).slice(2, 9); }
+function formatBDT(amount) { return amount == null ? "Contact for pricing" : "৳" + Number(amount).toLocaleString("en-BD"); }
+function pad2(n) { return String(n).padStart(2, "0"); }
+
+/* Generate 30-minute-increment time options, e.g. ["00:00","00:30",...,"23:30"] */
+function generateTimeSlots() {
+  const out = [];
+  for (let h = 0; h < 24; h++) for (let m = 0; m < 60; m += 30) out.push(pad2(h) + ":" + pad2(m));
+  return out;
+}
+const TIME_SLOTS = generateTimeSlots();
+
+/* Combine a "YYYY-MM-DD" date + "HH:MM" time into a real Date object. */
+function combineDateTime(dateStr, timeStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const [h, mi] = timeStr.split(":").map(Number);
+  return new Date(y, m - 1, d, h, mi, 0, 0);
+}
+
+/* Compute booking start/end Date objects, correctly rolling the end time
+   to the next calendar day when the booking crosses midnight. */
+function computeBookingWindow(dateStr, startTime, durationMinutes) {
+  const start = combineDateTime(dateStr, startTime);
+  const end = new Date(start.getTime() + Number(durationMinutes) * 60000);
+  return { start, end, crossesMidnight: end.getDate() !== start.getDate() || end.getMonth() !== start.getMonth() };
+}
+
+/* Overlap check: newStart < existingEnd && newEnd > existingStart */
+function timeRangesOverlap(newStart, newEnd, existingStart, existingEnd) {
+  return newStart < existingEnd && newEnd > existingStart;
+}
+
+/* Returns true if a proposed booking conflicts with any existing (non-cancelled/
+   non-rejected) booking on the SAME facility. Different facilities never conflict. */
+function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId }) {
+  const { start: newStart, end: newEnd } = computeBookingWindow(date, startTime, duration);
+  return existingBookings.some((b) => {
+    if (b.id === excludeBookingId) return false;
+    if (b.facilityId !== facilityId) return false;
+    if (b.status === "cancelled" || b.status === "rejected") return false;
+    const { start: exStart, end: exEnd } = computeBookingWindow(b.date, b.startTime, b.duration);
+    return timeRangesOverlap(newStart, newEnd, exStart, exEnd);
+  });
+}
+
+function isWeekend(dateObj) { const day = dateObj.getDay(); return day === 5 || day === 6; } // Fri/Sat = weekend in BD
+
+/* ------------------------------------------------------------- pricing --- */
+/* pricingRules[]: { id, facilityId, dayType:'weekday'|'weekend'|'all',
+   startTime,endTime (HH:MM), duration (minutes), price, weekendPrice,
+   specialPrice, active }
+   Returns { price, rule } or { price: null, rule: null } — callers must
+   render "Contact for pricing" rather than ever guessing a number. */
+function resolvePrice({ facilityId, date, startTime, duration, rules }) {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const weekend = isWeekend(dateObj);
+  const startMin = TIME_SLOTS.indexOf(startTime) >= 0 ? hhmmToMin(startTime) : hhmmToMin(startTime);
+  const endMin = startMin + Number(duration);
+
+  const candidates = (rules || []).filter((r) => {
+    if (!r.active) return false;
+    if (r.facilityId !== facilityId) return false;
+    if (Number(r.duration) !== Number(duration)) return false;
+    if (r.dayType === "weekend" && !weekend) return false;
+    if (r.dayType === "weekday" && weekend) return false;
+    const rs = hhmmToMin(r.startTime), re = hhmmToMin(r.endTime);
+    // handle windows that cross midnight (e.g. 22:00 -> 02:00)
+    if (re <= rs) return startMin >= rs || (endMin % 1440) <= re || endMin <= 1440;
+    return startMin >= rs && endMin <= re;
+  });
+  if (!candidates.length) return { price: null, rule: null };
+
+  const withSpecial = candidates.find((r) => r.specialPrice != null && r.specialPrice !== "");
+  if (withSpecial) return { price: Number(withSpecial.specialPrice), rule: withSpecial };
+
+  const rule = candidates[0];
+  if (weekend && rule.weekendPrice != null && rule.weekendPrice !== "") return { price: Number(rule.weekendPrice), rule };
+  return { price: Number(rule.price), rule };
+}
+function hhmmToMin(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; }
+
+/* ============================================================================
+   DEMO DATASET — only used while FIREBASE_CONFIG still has placeholders.
+   Every fact here matches the verified Victory Sports Arena content brief;
+   nothing is invented. Mutated in place by admin.html's demo CRUD actions
+   so the panel can be previewed before Firebase is connected.
+   ========================================================================= */
+const DEMO = {
+  facilities: [
+    { id: "football-turf", name: "Football / Futsal Turf", sport: "Football & Futsal", description: "FIFA-certified 50mm infill grass, renovated for a professional-quality playing surface.", capacity: "", hours: "", active: true, images: [] },
+    { id: "cricket", name: "Cricket", sport: "Cricket", description: "Enjoy competitive cricket sessions in a dedicated sports environment at Victory Sports Arena.", capacity: "", hours: "", active: true, images: [] },
+  ],
+  pricingRules: [],
+  offers: [],
+  bookings: [
+    { id: "demo-bk-1", facilityId: "football-turf", facilityName: "Football / Futsal Turf", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX", date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60, price: null, status: "pending", team: null, notes: null, createdAt: new Date().toISOString() },
+  ],
+  events: [
+    { id: "demo-ev-1", name: "BKS Tournament", sport: "Football / Futsal", date: "2025-10-01", time: "", description: "Tournament held at Victory Sports Arena.", registration: "", status: "Completed" },
+  ],
+  gallery: [],
+  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram." },
+  users: [
+    { id: "demo-admin", email: "admin@victorysportsarena.com", role: "admin" },
+  ],
+};
+
+</script>
+<script>
+/* ============================================================ ADMIN LOGIC */
+
+let facilities = [], pricingRules = [], offers = [], bookings = [], events = [], gallery = [], settings = DEMO.settings, users = [];
+let currentUser = { email: "Demo preview (not signed in)", role: "admin" };
+
+/* ------------------------------------------------------------- auth gate */
+const loginScreen = document.getElementById("loginScreen");
+const dashboardShell = document.getElementById("dashboardShell");
+
+if (DEMO_MODE) {
+  document.getElementById("demoLoginNote").style.display = "block";
+  document.getElementById("demoEnterBtn").style.display = "inline-flex";
+  document.getElementById("demoEnterBtn").addEventListener("click", () => enterDashboard({ email: "demo@victorysportsarena.com" }, "admin"));
+  document.getElementById("loginForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    showLoginError('Connect Firebase to enable real sign-in — use "Preview Dashboard" below for now.');
+  });
+  document.getElementById("logoutBtn").addEventListener("click", () => location.reload());
+} else {
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return;
+    const roleDoc = await db.collection(COLLECTIONS.users).doc(user.uid).get();
+    if (!roleDoc.exists) {
+      showLoginError("Your account has no assigned role yet. Ask an existing admin to add you under Users.");
+      auth.signOut();
+      return;
+    }
+    enterDashboard(user, roleDoc.data().role || "staff");
+  });
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("li-email").value;
+    const password = document.getElementById("li-password").value;
+    const btn = document.getElementById("loginBtn");
+    btn.disabled = true; btn.textContent = "Signing in…";
+    try { await auth.signInWithEmailAndPassword(email, password); }
+    catch (err) { showLoginError("Incorrect email or password."); }
+    finally { btn.disabled = false; btn.textContent = "Sign In"; }
+  });
+  document.getElementById("logoutBtn").addEventListener("click", () => auth.signOut().then(() => location.reload()));
+}
+function showLoginError(msg) { const el = document.getElementById("loginError"); el.textContent = msg; el.classList.add("show"); }
+
+async function enterDashboard(user, role) {
+  loginScreen.style.display = "none";
+  dashboardShell.style.display = "flex";
+  currentUser = { email: user.email, role: role || "admin" };
+  document.getElementById("userEmail").textContent = currentUser.email;
+  document.getElementById("userRoleBadge").textContent = currentUser.role;
+  document.getElementById("userRoleBadge").className = "badge badge-" + currentUser.role;
+  applyRolePermissions();
+  await loadAdminData();
+  renderAll();
+  initCalendar();
+}
+
+function applyRolePermissions() {
+  document.querySelectorAll("#sidebarNav button[data-perm]").forEach((btn) => {
+    const allowed = canAccess(currentUser.role, btn.dataset.perm);
+    btn.style.display = allowed ? "flex" : "none";
+  });
+  // land on the first allowed panel if Dashboard is hidden (shouldn't normally happen)
+  const firstAllowed = document.querySelector('#sidebarNav button[data-perm]:not([style*="display: none"])');
+  if (firstAllowed) switchPanel(firstAllowed);
+}
+
+/* --------------------------------------------------------------- nav --- */
+document.getElementById("sidebarNav").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-panel]");
+  if (btn) switchPanel(btn);
+});
+function switchPanel(btn) {
+  [...document.querySelectorAll(".sidebar-nav button")].forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  [...document.querySelectorAll(".panel")].forEach((p) => p.classList.remove("active"));
+  document.getElementById(btn.dataset.panel).classList.add("active");
+  document.getElementById("topbarTitle").textContent = btn.textContent.replace("◆", "").trim();
+}
+
+/* ---------------------------------------------------------- data load --- */
+async function loadAdminData() {
+  if (DEMO_MODE) {
+    facilities = DEMO.facilities; pricingRules = DEMO.pricingRules; offers = DEMO.offers;
+    bookings = DEMO.bookings; events = DEMO.events; gallery = DEMO.gallery; settings = DEMO.settings; users = DEMO.users;
+    return;
+  }
+  const [facSnap, ruleSnap, offerSnap, bookSnap, evSnap, gallerySnap, settingsSnap, userSnap] = await Promise.all([
+    db.collection(COLLECTIONS.facilities).get(),
+    db.collection(COLLECTIONS.pricingRules).get(),
+    db.collection(COLLECTIONS.offers).get(),
+    db.collection(COLLECTIONS.bookings).orderBy("createdAt", "desc").get(),
+    db.collection(COLLECTIONS.events).orderBy("date", "desc").get(),
+    db.collection(COLLECTIONS.gallery).get(),
+    db.collection(COLLECTIONS.settings).doc("site").get(),
+    db.collection(COLLECTIONS.users).get(),
+  ]);
+  facilities = facSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  pricingRules = ruleSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  offers = offerSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  bookings = bookSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  events = evSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  gallery = gallerySnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  if (settingsSnap.exists) settings = settingsSnap.data();
+  users = userSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+function renderAll() {
+  populateAllTimeSelects();
+  renderDashboardStats();
+  renderBookings();
+  renderFacilities();
+  renderPricing();
+  renderOffers();
+  renderEvents();
+  renderGallery();
+  renderCustomers();
+  renderUsers();
+  renderSettingsForm();
+  populateFacilitySelects();
+}
+function populateAllTimeSelects() {
+  const opts = TIME_SLOTS.map((t) => `<option value="${t}">${t}</option>`).join("");
+  ["pm-start", "pm-end", "bm-start", "em-time"].forEach((id) => { document.getElementById(id).innerHTML = opts; });
+}
+function populateFacilitySelects() {
+  const opts = facilities.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  document.getElementById("pm-facility").innerHTML = opts;
+  document.getElementById("bm-facility").innerHTML = opts;
+  document.getElementById("bookingFacilityFilter").innerHTML = `<option value="">All facilities</option>` + opts;
+}
+
+/* -------------------------------------------------------------- stats --- */
+function todayStr() { const d = new Date(); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+
+function renderDashboardStats() {
+  document.getElementById("statTotal").textContent = bookings.length;
+  document.getElementById("statPending").textContent = bookings.filter((b) => b.status === "pending").length;
+  document.getElementById("statConfirmed").textContent = bookings.filter((b) => b.status === "confirmed").length;
+  document.getElementById("statToday").textContent = bookings.filter((b) => b.date === todayStr()).length;
+  const revenue = bookings.filter((b) => b.status === "confirmed" && b.price != null).reduce((sum, b) => sum + Number(b.price), 0);
+  document.getElementById("statRevenue").textContent = formatBDT(revenue);
+
+  const statsBody = document.querySelector("#facilityStatsTable tbody");
+  statsBody.innerHTML = facilities.length ? facilities.map((f) => {
+    const fb = bookings.filter((b) => b.facilityId === f.id);
+    return `<tr><td>${escapeHtml(f.name)}</td><td>${fb.length}</td><td>${fb.filter((b) => b.status === "confirmed").length}</td><td>${fb.filter((b) => b.status === "pending").length}</td></tr>`;
+  }).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No facilities yet.</td></tr>`;
+
+  const recentBody = document.querySelector("#recentBookingsTable tbody");
+  const recent = bookings.slice(0, 5);
+  recentBody.innerHTML = recent.length ? recent.map((b) => `<tr><td>${escapeHtml(b.customerName)}</td><td>${escapeHtml(b.facilityName || "")}</td><td>${escapeHtml(b.date)}</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No bookings yet.</td></tr>`;
+}
+
+/* ------------------------------------------------------------ bookings --- */
+function filteredBookings() {
+  const q = document.getElementById("bookingSearch").value.trim().toLowerCase();
+  const status = document.getElementById("bookingStatusFilter").value;
+  const facilityId = document.getElementById("bookingFacilityFilter").value;
+  const date = document.getElementById("bookingDateFilter").value;
+  return bookings.filter((b) => {
+    if (q && !((b.customerName || "").toLowerCase().includes(q) || (b.phone || "").toLowerCase().includes(q))) return false;
+    if (status && b.status !== status) return false;
+    if (facilityId && b.facilityId !== facilityId) return false;
+    if (date && b.date !== date) return false;
+    return true;
+  });
+}
+function renderBookings() {
+  const tbody = document.querySelector("#bookingsTable tbody");
+  const list = filteredBookings();
+  tbody.innerHTML = list.length ? list.map((b) => `
+    <tr>
+      <td><a href="#" data-action="view-booking" data-id="${b.id}" style="color:var(--text);text-decoration:underline;">${escapeHtml(b.customerName)}</a></td>
+      <td>${escapeHtml(b.phone)}</td>
+      <td>${escapeHtml(b.facilityName || "")}</td>
+      <td>${escapeHtml(b.date)} · ${escapeHtml(b.startTime)} (${b.duration}min)${b.crossesMidnight ? " ⏭" : ""}</td>
+      <td>${b.price != null ? formatBDT(b.price) : "Contact for pricing"}</td>
+      <td><span class="badge badge-${b.status}">${b.status}</span></td>
+      <td class="actions">
+        ${b.status === "pending" ? `<button class="mini-btn approve" data-action="approve" data-id="${b.id}">Approve</button><button class="mini-btn reject" data-action="reject" data-id="${b.id}">Reject</button>` : ""}
+        <button class="mini-btn" data-action="edit-booking" data-id="${b.id}">Edit</button>
+        ${b.status !== "cancelled" ? `<button class="mini-btn" data-action="cancel" data-id="${b.id}">Cancel</button>` : ""}
+      </td>
+    </tr>`).join("") : `<tr><td colspan="7" style="color:var(--text-muted);">No bookings match.</td></tr>`;
+}
+["bookingSearch", "bookingStatusFilter", "bookingFacilityFilter", "bookingDateFilter"].forEach((id) => {
+  document.getElementById(id).addEventListener("input", renderBookings);
+  document.getElementById(id).addEventListener("change", renderBookings);
+});
+
+document.querySelector("#bookingsTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]");
+  if (!btn) return;
+  e.preventDefault();
+  const id = btn.dataset.id;
+  const booking = bookings.find((b) => b.id === id);
+  if (!booking) return;
+  const action = btn.dataset.action;
+  if (action === "view-booking") return openBookingDetails(booking);
+  if (action === "edit-booking") return openBookingModal(booking);
+  const statusMap = { approve: "confirmed", reject: "rejected", cancel: "cancelled" };
+  if (statusMap[action]) {
+    booking.status = statusMap[action];
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(id).update({ status: statusMap[action] });
+    renderBookings(); renderDashboardStats(); renderCalendarView();
+  }
+});
+
+function openBookingDetails(b) {
+  document.getElementById("bookingDetailsBody").innerHTML = `
+    <div class="field"><label>Customer</label><div>${escapeHtml(b.customerName)} — ${escapeHtml(b.phone)}</div></div>
+    <div class="field"><label>Facility</label><div>${escapeHtml(b.facilityName || "")}</div></div>
+    <div class="field"><label>Date / Time</label><div>${escapeHtml(b.date)} at ${escapeHtml(b.startTime)}, ${b.duration} minutes${b.crossesMidnight ? " (crosses midnight)" : ""}</div></div>
+    <div class="field"><label>Price</label><div>${b.price != null ? formatBDT(b.price) : "Contact for pricing"}</div></div>
+    <div class="field"><label>Status</label><div><span class="badge badge-${b.status}">${b.status}</span></div></div>
+    ${b.team ? `<div class="field"><label>Team / Company</label><div>${escapeHtml(b.team)}</div></div>` : ""}
+    ${b.notes ? `<div class="field"><label>Notes</label><div>${escapeHtml(b.notes)}</div></div>` : ""}
+  `;
+  document.getElementById("bookingDetailsModal").classList.add("open");
+}
+
+/* manual booking / edit */
+const bookingModal = document.getElementById("bookingModal");
+document.getElementById("addManualBookingBtn").addEventListener("click", () => openBookingModal());
+function openBookingModal(b) {
+  document.getElementById("bookingModalTitle").textContent = b ? "Edit Booking" : "Manual Booking";
+  document.getElementById("bookingFormError").classList.remove("show");
+  document.getElementById("bm-id").value = b ? b.id : "";
+  document.getElementById("bm-facility").value = b ? b.facilityId : (facilities[0] ? facilities[0].id : "");
+  document.getElementById("bm-date").value = b ? b.date : todayStr();
+  document.getElementById("bm-start").value = b ? b.startTime : "18:00";
+  document.getElementById("bm-duration").value = b ? String(b.duration) : "60";
+  document.getElementById("bm-name").value = b ? b.customerName : "";
+  document.getElementById("bm-phone").value = b ? b.phone : "";
+  document.getElementById("bm-status").value = b ? b.status : "confirmed";
+  document.getElementById("bm-notes").value = b ? (b.notes || "") : "";
+  updateAdminPricePreview();
+  bookingModal.classList.add("open");
+}
+function updateAdminPricePreview() {
+  const facilityId = document.getElementById("bm-facility").value;
+  const date = document.getElementById("bm-date").value;
+  const start = document.getElementById("bm-start").value;
+  const duration = document.getElementById("bm-duration").value;
+  const el = document.getElementById("bmPricePreview");
+  if (!facilityId || !date || !start) { el.innerHTML = "Select facility, date and time"; el.classList.remove("err"); return; }
+  const excludeId = document.getElementById("bm-id").value || null;
+  const conflict = hasBookingConflict({ facilityId, date, startTime: start, duration, existingBookings: bookings, excludeBookingId: excludeId });
+  if (conflict) { el.innerHTML = "⚠ Conflicts with an existing booking on this facility."; el.classList.add("err"); return; }
+  el.classList.remove("err");
+  const { price } = resolvePrice({ facilityId, date, startTime: start, duration, rules: pricingRules });
+  el.innerHTML = `Price: <b>${formatBDT(price)}</b>`;
+}
+["bm-facility", "bm-date", "bm-start", "bm-duration"].forEach((id) => document.getElementById(id).addEventListener("change", updateAdminPricePreview));
+
+document.getElementById("adminBookingForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("bm-id").value;
+  const facilityId = document.getElementById("bm-facility").value;
+  const date = document.getElementById("bm-date").value;
+  const startTime = document.getElementById("bm-start").value;
+  const duration = document.getElementById("bm-duration").value;
+  const errEl = document.getElementById("bookingFormError");
+  errEl.classList.remove("show");
+
+  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings, excludeBookingId: id || null })) {
+    errEl.textContent = "This facility already has a booking that overlaps this time window.";
+    errEl.classList.add("show");
+    return;
+  }
+  const facility = facilities.find((f) => f.id === facilityId);
+  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules });
+  const { crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const data = {
+    facilityId, facilityName: facility ? facility.name : "",
+    date, startTime, duration: Number(duration), crossesMidnight, price,
+    customerName: document.getElementById("bm-name").value,
+    phone: document.getElementById("bm-phone").value,
+    status: document.getElementById("bm-status").value,
+    notes: document.getElementById("bm-notes").value || null,
+  };
+  const idx = bookings.findIndex((b) => b.id === id);
+  if (idx >= 0) {
+    bookings[idx] = { ...bookings[idx], ...data };
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(id).update(data);
+  } else {
+    const newBooking = { id: newId("bk"), ...data, createdAt: DEMO_MODE ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp() };
+    bookings.unshift(newBooking);
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(newBooking.id).set({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  }
+  bookingModal.classList.remove("open");
+  renderBookings(); renderDashboardStats(); renderCustomers(); renderCalendarView();
+});
+
+/* --------------------------------------------------------- facilities --- */
+function renderFacilities() {
+  const tbody = document.querySelector("#facilitiesTable tbody");
+  tbody.innerHTML = facilities.length ? facilities.map((f) => `
+    <tr>
+      <td>${escapeHtml(f.name)}</td><td>${escapeHtml(f.sport || "")}</td>
+      <td><span class="badge badge-${f.active ? "active" : "inactive"}">${f.active ? "Active" : "Inactive"}</span></td>
+      <td class="actions"><button class="mini-btn" data-action="edit-facility" data-id="${f.id}">Edit</button><button class="mini-btn reject" data-action="delete-facility" data-id="${f.id}">Delete</button></td>
+    </tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No facilities yet — add your first one.</td></tr>`;
+}
+const facilityModal = document.getElementById("facilityModal");
+document.getElementById("addFacilityBtn").addEventListener("click", () => openFacilityModal());
+document.querySelector("#facilitiesTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]"); if (!btn) return;
+  const f = facilities.find((x) => x.id === btn.dataset.id);
+  if (btn.dataset.action === "edit-facility") openFacilityModal(f);
+  if (btn.dataset.action === "delete-facility") {
+    if (!confirm(`Delete "${f.name}"? This cannot be undone.`)) return;
+    facilities = facilities.filter((x) => x.id !== f.id);
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.facilities).doc(f.id).delete();
+    renderFacilities(); renderDashboardStats(); populateFacilitySelects();
+  }
+});
+function openFacilityModal(f) {
+  document.getElementById("facilityModalTitle").textContent = f ? "Edit Facility" : "Add Facility";
+  document.getElementById("fm-id").value = f ? f.id : "";
+  document.getElementById("fm-name").value = f ? f.name : "";
+  document.getElementById("fm-sport").value = f ? f.sport : "";
+  document.getElementById("fm-description").value = f ? (f.description || "") : "";
+  document.getElementById("fm-capacity").value = f ? (f.capacity || "") : "";
+  document.getElementById("fm-hours").value = f ? (f.hours || "") : "";
+  document.getElementById("fm-active").value = f ? String(f.active) : "true";
+  facilityModal.classList.add("open");
+}
+document.getElementById("facilityForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("fm-id").value || newId("facility");
+  const data = {
+    name: document.getElementById("fm-name").value, sport: document.getElementById("fm-sport").value,
+    description: document.getElementById("fm-description").value, capacity: document.getElementById("fm-capacity").value,
+    hours: document.getElementById("fm-hours").value, active: document.getElementById("fm-active").value === "true", images: [],
+  };
+  const idx = facilities.findIndex((f) => f.id === id);
+  if (idx >= 0) facilities[idx] = { ...facilities[idx], ...data }; else facilities.push({ id, ...data });
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.facilities).doc(id).set(data, { merge: true });
+  facilityModal.classList.remove("open");
+  renderFacilities(); renderDashboardStats(); populateFacilitySelects();
+});
+
+/* ------------------------------------------------------------- pricing --- */
+function renderPricing() {
+  const tbody = document.querySelector("#pricingTable tbody");
+  tbody.innerHTML = pricingRules.length ? pricingRules.map((r) => {
+    const facility = facilities.find((f) => f.id === r.facilityId);
+    return `<tr>
+      <td>${escapeHtml(r.label || "—")}</td>
+      <td>${escapeHtml(facility ? facility.name : r.facilityId)}</td>
+      <td>${escapeHtml(r.dayType)}</td>
+      <td>${escapeHtml(r.startTime)}–${escapeHtml(r.endTime)}</td>
+      <td>${r.duration} min</td>
+      <td>${formatBDT(r.price)}</td>
+      <td>${r.weekendPrice != null && r.weekendPrice !== "" ? formatBDT(r.weekendPrice) : "—"}</td>
+      <td>${r.specialPrice != null && r.specialPrice !== "" ? formatBDT(r.specialPrice) : "—"}</td>
+      <td><span class="badge badge-${r.active ? "active" : "inactive"}">${r.active ? "Active" : "Inactive"}</span></td>
+      <td class="actions"><button class="mini-btn" data-action="edit-pricing" data-id="${r.id}">Edit</button><button class="mini-btn reject" data-action="delete-pricing" data-id="${r.id}">Delete</button></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="10" style="color:var(--text-muted);">No pricing rules yet.</td></tr>`;
+}
+const pricingModal = document.getElementById("pricingModal");
+document.getElementById("addPricingBtn").addEventListener("click", () => openPricingModal());
+document.querySelector("#pricingTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]"); if (!btn) return;
+  const r = pricingRules.find((x) => x.id === btn.dataset.id);
+  if (btn.dataset.action === "edit-pricing") openPricingModal(r);
+  if (btn.dataset.action === "delete-pricing") {
+    if (!confirm("Delete this pricing rule?")) return;
+    pricingRules = pricingRules.filter((x) => x.id !== r.id);
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.pricingRules).doc(r.id).delete();
+    renderPricing();
+  }
+});
+function openPricingModal(r) {
+  document.getElementById("pm-id").value = r ? r.id : "";
+  document.getElementById("pm-label").value = r ? (r.label || "") : "";
+  document.getElementById("pm-facility").value = r ? r.facilityId : (facilities[0] ? facilities[0].id : "");
+  document.getElementById("pm-daytype").value = r ? r.dayType : "all";
+  document.getElementById("pm-start").value = r ? r.startTime : "18:00";
+  document.getElementById("pm-end").value = r ? r.endTime : "22:00";
+  document.getElementById("pm-duration").value = r ? r.duration : "60";
+  document.getElementById("pm-price").value = r ? r.price : "";
+  document.getElementById("pm-weekend").value = r && r.weekendPrice != null ? r.weekendPrice : "";
+  document.getElementById("pm-special").value = r && r.specialPrice != null ? r.specialPrice : "";
+  document.getElementById("pm-active").value = r ? String(r.active) : "true";
+  pricingModal.classList.add("open");
+}
+document.getElementById("pricingForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("pm-id").value || newId("rule");
+  const data = {
+    label: document.getElementById("pm-label").value || null,
+    facilityId: document.getElementById("pm-facility").value,
+    dayType: document.getElementById("pm-daytype").value,
+    startTime: document.getElementById("pm-start").value,
+    endTime: document.getElementById("pm-end").value,
+    duration: Number(document.getElementById("pm-duration").value),
+    price: Number(document.getElementById("pm-price").value),
+    weekendPrice: document.getElementById("pm-weekend").value ? Number(document.getElementById("pm-weekend").value) : null,
+    specialPrice: document.getElementById("pm-special").value ? Number(document.getElementById("pm-special").value) : null,
+    active: document.getElementById("pm-active").value === "true",
+  };
+  const idx = pricingRules.findIndex((r) => r.id === id);
+  if (idx >= 0) pricingRules[idx] = { ...pricingRules[idx], ...data }; else pricingRules.push({ id, ...data });
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.pricingRules).doc(id).set(data, { merge: true });
+  pricingModal.classList.remove("open");
+  renderPricing();
+});
+
+/* -------------------------------------------------------------- offers --- */
+function renderOffers() {
+  const tbody = document.querySelector("#offersTable tbody");
+  tbody.innerHTML = offers.length ? offers.map((o) => `<tr>
+    <td>${escapeHtml(o.title)}</td><td>${escapeHtml(o.description || "")}</td>
+    <td><span class="badge badge-${o.active ? "active" : "inactive"}">${o.active ? "Active" : "Inactive"}</span></td>
+    <td class="actions"><button class="mini-btn" data-action="edit-offer" data-id="${o.id}">Edit</button><button class="mini-btn reject" data-action="delete-offer" data-id="${o.id}">Delete</button></td>
+  </tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No offers yet.</td></tr>`;
+}
+const offerModal = document.getElementById("offerModal");
+document.getElementById("addOfferBtn").addEventListener("click", () => openOfferModal());
+document.querySelector("#offersTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]"); if (!btn) return;
+  const o = offers.find((x) => x.id === btn.dataset.id);
+  if (btn.dataset.action === "edit-offer") openOfferModal(o);
+  if (btn.dataset.action === "delete-offer") {
+    if (!confirm(`Delete "${o.title}"?`)) return;
+    offers = offers.filter((x) => x.id !== o.id);
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.offers).doc(o.id).delete();
+    renderOffers();
+  }
+});
+function openOfferModal(o) {
+  document.getElementById("om-id").value = o ? o.id : "";
+  document.getElementById("om-title").value = o ? o.title : "";
+  document.getElementById("om-description").value = o ? (o.description || "") : "";
+  document.getElementById("om-active").value = o ? String(o.active) : "true";
+  offerModal.classList.add("open");
+}
+document.getElementById("offerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("om-id").value || newId("offer");
+  const data = { title: document.getElementById("om-title").value, description: document.getElementById("om-description").value, active: document.getElementById("om-active").value === "true" };
+  const idx = offers.findIndex((o) => o.id === id);
+  if (idx >= 0) offers[idx] = { ...offers[idx], ...data }; else offers.push({ id, ...data });
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.offers).doc(id).set(data, { merge: true });
+  offerModal.classList.remove("open");
+  renderOffers();
+});
+
+/* -------------------------------------------------------------- events --- */
+function renderEvents() {
+  const tbody = document.querySelector("#eventsTable tbody");
+  tbody.innerHTML = events.length ? events.map((ev) => `<tr>
+    <td>${escapeHtml(ev.name)}</td><td>${escapeHtml(ev.sport || "")}</td><td>${escapeHtml(ev.date)}</td>
+    <td>${escapeHtml(ev.status)}</td>
+    <td><span class="badge badge-${ev.published !== false ? "active" : "inactive"}">${ev.published !== false ? "Published" : "Unpublished"}</span></td>
+    <td class="actions">
+      <button class="mini-btn" data-action="edit-event" data-id="${ev.id}">Edit</button>
+      <button class="mini-btn" data-action="toggle-publish" data-id="${ev.id}">${ev.published !== false ? "Unpublish" : "Publish"}</button>
+      <button class="mini-btn reject" data-action="delete-event" data-id="${ev.id}">Delete</button>
+    </td>
+  </tr>`).join("") : `<tr><td colspan="6" style="color:var(--text-muted);">No events yet.</td></tr>`;
+}
+const eventModal = document.getElementById("eventModal");
+document.getElementById("addEventBtn").addEventListener("click", () => openEventModal());
+document.querySelector("#eventsTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]"); if (!btn) return;
+  const ev = events.find((x) => x.id === btn.dataset.id);
+  if (btn.dataset.action === "edit-event") openEventModal(ev);
+  if (btn.dataset.action === "toggle-publish") {
+    ev.published = ev.published === false ? true : false;
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.events).doc(ev.id).update({ published: ev.published });
+    renderEvents();
+  }
+  if (btn.dataset.action === "delete-event") {
+    if (!confirm(`Delete "${ev.name}"?`)) return;
+    events = events.filter((x) => x.id !== ev.id);
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.events).doc(ev.id).delete();
+    renderEvents(); renderDashboardStats();
+  }
+});
+function openEventModal(ev) {
+  document.getElementById("em-id").value = ev ? ev.id : "";
+  document.getElementById("em-name").value = ev ? ev.name : "";
+  document.getElementById("em-sport").value = ev ? (ev.sport || "") : "";
+  document.getElementById("em-date").value = ev ? ev.date : "";
+  document.getElementById("em-time").value = ev ? (ev.time || "18:00") : "18:00";
+  document.getElementById("em-description").value = ev ? (ev.description || "") : "";
+  document.getElementById("em-registration").value = ev ? (ev.registration || "") : "";
+  document.getElementById("em-status").value = ev ? ev.status : "Upcoming";
+  document.getElementById("em-published").value = ev ? String(ev.published !== false) : "true";
+  eventModal.classList.add("open");
+}
+document.getElementById("eventForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("em-id").value || newId("event");
+  const data = {
+    name: document.getElementById("em-name").value, sport: document.getElementById("em-sport").value,
+    date: document.getElementById("em-date").value, time: document.getElementById("em-time").value,
+    description: document.getElementById("em-description").value, registration: document.getElementById("em-registration").value,
+    status: document.getElementById("em-status").value, published: document.getElementById("em-published").value === "true",
+  };
+  const idx = events.findIndex((x) => x.id === id);
+  if (idx >= 0) events[idx] = { ...events[idx], ...data }; else events.push({ id, ...data });
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.events).doc(id).set(data, { merge: true });
+  eventModal.classList.remove("open");
+  renderEvents(); renderDashboardStats();
+});
+
+/* ------------------------------------------------------------- gallery --- */
+function renderGallery() {
+  const grid = document.getElementById("adminGalleryGrid");
+  grid.innerHTML = gallery.length ? gallery.map((g) => `
+    <div class="ag-item">
+      <span class="ag-cat">${escapeHtml(g.category || "")}</span>
+      <img src="${g.url}" alt="${escapeHtml(g.title || "")}">
+      <div class="ag-overlay">
+        <button class="mini-btn" data-action="toggle-gallery" data-id="${g.id}">${g.active === false ? "Show" : "Hide"}</button>
+        <button class="mini-btn reject" data-action="delete-gallery" data-id="${g.id}">Delete</button>
+      </div>
+    </div>`).join("") : `<div class="empty-state">No images uploaded yet.</div>`;
+}
+document.getElementById("adminGalleryGrid").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action]"); if (!btn) return;
+  const g = gallery.find((x) => x.id === btn.dataset.id);
+  if (btn.dataset.action === "toggle-gallery") {
+    g.active = g.active === false ? true : false;
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.gallery).doc(g.id).update({ active: g.active });
+    renderGallery();
+  }
+  if (btn.dataset.action === "delete-gallery") {
+    if (!confirm("Delete this image?")) return;
+    gallery = gallery.filter((x) => x.id !== g.id);
+    if (!DEMO_MODE) {
+      await db.collection(COLLECTIONS.gallery).doc(g.id).delete();
+      if (g.storagePath) storage.ref(g.storagePath).delete().catch(() => {});
+    }
+    renderGallery();
+  }
+});
+document.getElementById("galUploadBtn").addEventListener("click", async () => {
+  const fileInput = document.getElementById("gal-file");
+  const file = fileInput.files[0];
+  if (!file) { alert("Choose an image file first."); return; }
+  const title = document.getElementById("gal-title").value;
+  const category = document.getElementById("gal-category").value;
+  const btn = document.getElementById("galUploadBtn");
+  btn.disabled = true; btn.textContent = "Uploading…";
+  try {
+    if (DEMO_MODE) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        gallery.unshift({ id: newId("gal"), url: reader.result, title, category, active: true });
+        renderGallery();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const path = `gallery/${Date.now()}_${file.name}`;
+      const ref = storage.ref(path);
+      await ref.put(file);
+      const url = await ref.getDownloadURL();
+      const docRef = await db.collection(COLLECTIONS.gallery).add({ url, title, category, active: true, storagePath: path, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      gallery.unshift({ id: docRef.id, url, title, category, active: true, storagePath: path });
+      renderGallery();
+    }
+    fileInput.value = ""; document.getElementById("gal-title").value = "";
+  } catch (err) {
+    alert("Upload failed: " + err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = "Upload Image";
+  }
+});
+
+/* ----------------------------------------------------------- customers --- */
+function buildCustomerList() {
+  const map = new Map();
+  bookings.forEach((b) => {
+    const key = (b.phone || "").replace(/\D/g, "") || b.customerName;
+    if (!map.has(key)) map.set(key, { name: b.customerName, phone: b.phone, bookings: [] });
+    map.get(key).bookings.push(b);
+  });
+  return [...map.values()].map((c) => ({ ...c, total: c.bookings.length, last: c.bookings.map((b) => b.date).sort().slice(-1)[0] }));
+}
+function renderCustomers() {
+  const q = (document.getElementById("customerSearch").value || "").toLowerCase();
+  const list = buildCustomerList().filter((c) => !q || c.name.toLowerCase().includes(q) || (c.phone || "").toLowerCase().includes(q));
+  const tbody = document.querySelector("#customersTable tbody");
+  tbody.innerHTML = list.length ? list.map((c) => `<tr>
+    <td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.phone)}</td><td>${c.total}</td><td>${escapeHtml(c.last || "")}</td>
+    <td class="actions"><button class="mini-btn" data-action="view-customer" data-phone="${escapeHtml(c.phone)}">View History</button></td>
+  </tr>`).join("") : `<tr><td colspan="5" style="color:var(--text-muted);">No customers yet.</td></tr>`;
+}
+document.getElementById("customerSearch").addEventListener("input", renderCustomers);
+document.querySelector("#customersTable tbody").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action='view-customer']"); if (!btn) return;
+  const c = buildCustomerList().find((x) => x.phone === btn.dataset.phone);
+  if (!c) return;
+  document.getElementById("customerHistoryBody").innerHTML = `
+    <div class="field"><label>Name</label><div>${escapeHtml(c.name)}</div></div>
+    <div class="field"><label>Phone</label><div>${escapeHtml(c.phone)}</div></div>
+    <table class="data-table" style="margin-top:10px;">
+      <thead><tr><th>Facility</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+      <tbody>${c.bookings.map((b) => `<tr><td>${escapeHtml(b.facilityName || "")}</td><td>${escapeHtml(b.date)}</td><td>${escapeHtml(b.startTime)}</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`).join("")}</tbody>
+    </table>`;
+  document.getElementById("customerModal").classList.add("open");
+});
+
+/* --------------------------------------------------------------- users --- */
+function renderUsers() {
+  const tbody = document.querySelector("#usersTable tbody");
+  tbody.innerHTML = users.length ? users.map((u) => `<tr>
+    <td>${escapeHtml(u.email)}</td><td><span class="badge badge-${u.role}">${escapeHtml(u.role)}</span></td>
+    <td class="actions">${u.email === currentUser.email ? "<span style=\"color:var(--text-muted);font-size:12px;\">You</span>" : `<button class="mini-btn reject" data-action="remove-user" data-id="${u.id}">Remove</button>`}</td>
+  </tr>`).join("") : `<tr><td colspan="3" style="color:var(--text-muted);">No staff users yet.</td></tr>`;
+}
+document.querySelector("#usersTable tbody").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action='remove-user']"); if (!btn) return;
+  const u = users.find((x) => x.id === btn.dataset.id);
+  if (!confirm(`Remove access for ${u.email}? (Their Authentication login will still exist — this only removes their role.)`)) return;
+  users = users.filter((x) => x.id !== u.id);
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.users).doc(u.id).delete();
+  renderUsers();
+});
+const userModal = document.getElementById("userModal");
+document.getElementById("addUserBtn").addEventListener("click", () => { document.getElementById("userFormError").classList.remove("show"); document.getElementById("userForm").reset(); userModal.classList.add("open"); });
+document.getElementById("userForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("um-email").value;
+  const password = document.getElementById("um-password").value;
+  const role = document.getElementById("um-role").value;
+  const errEl = document.getElementById("userFormError");
+  errEl.classList.remove("show");
+  if (DEMO_MODE) {
+    users.push({ id: newId("user"), email, role });
+    userModal.classList.remove("open");
+    renderUsers();
+    return;
+  }
+  try {
+    // Create the new auth user on a SECONDARY app instance so the admin's
+    // own session (on the primary `auth`) is not replaced/signed out.
+    const secondaryApp = firebase.initializeApp(FIREBASE_CONFIG, "secondary-" + Date.now());
+    const cred = await secondaryApp.auth().createUserWithEmailAndPassword(email, password);
+    await db.collection(COLLECTIONS.users).doc(cred.user.uid).set({ email, role });
+    await secondaryApp.auth().signOut();
+    await secondaryApp.delete();
+    users.push({ id: cred.user.uid, email, role });
+    userModal.classList.remove("open");
+    renderUsers();
+  } catch (err) {
+    errEl.textContent = err.message;
+    errEl.classList.add("show");
+  }
+});
+
+/* ------------------------------------------------------------ settings --- */
+function renderSettingsForm() {
+  document.getElementById("st-phone").value = settings.phone || "";
+  document.getElementById("st-address").value = settings.address || "";
+  document.getElementById("st-facebook").value = settings.facebook || "";
+  document.getElementById("st-hours").value = settings.hours || "";
+  document.getElementById("st-hero").value = settings.hero || "";
+}
+document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  settings = {
+    phone: document.getElementById("st-phone").value, address: document.getElementById("st-address").value,
+    facebook: document.getElementById("st-facebook").value, hours: document.getElementById("st-hours").value,
+    hero: document.getElementById("st-hero").value,
+  };
+  if (!DEMO_MODE) await db.collection(COLLECTIONS.settings).doc("site").set(settings, { merge: true });
+  const saved = document.getElementById("settingsSaved");
+  saved.style.display = "inline"; setTimeout(() => (saved.style.display = "none"), 2000);
+});
+
+/* ------------------------------------------------------------- calendar --- */
+let calView = "month", calDate = new Date();
+function initCalendar() {
+  document.querySelectorAll(".calendar-tabs button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(".calendar-tabs button").forEach((x) => x.classList.remove("active"));
+    b.classList.add("active"); calView = b.dataset.view; renderCalendarView();
+  }));
+  document.getElementById("calPrev").addEventListener("click", () => { shiftCalDate(-1); renderCalendarView(); });
+  document.getElementById("calNext").addEventListener("click", () => { shiftCalDate(1); renderCalendarView(); });
+  document.getElementById("calToday").addEventListener("click", () => { calDate = new Date(); renderCalendarView(); });
+  renderCalendarView();
+}
+function shiftCalDate(dir) {
+  if (calView === "month") calDate.setMonth(calDate.getMonth() + dir);
+  else if (calView === "week") calDate.setDate(calDate.getDate() + dir * 7);
+  else calDate.setDate(calDate.getDate() + dir);
+}
+function bookingsOnDate(dateStr) { return bookings.filter((b) => b.date === dateStr && b.status !== "cancelled" && b.status !== "rejected"); }
+function dstr(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+
+function renderCalendarView() {
+  const label = document.getElementById("calLabel");
+  const body = document.getElementById("calendarBody");
+  if (calView === "month") {
+    label.textContent = calDate.toLocaleString("en", { month: "long", year: "numeric" });
+    const year = calDate.getFullYear(), month = calDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const startOffset = firstDay.getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < startOffset; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(new Date(year, month, d));
+    const dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => `<div class="dow">${d}</div>`).join("");
+    const today = dstr(new Date());
+    const cellsHtml = cells.map((d) => {
+      if (!d) return `<div class="day-cell other-month"></div>`;
+      const ds = dstr(d);
+      const count = bookingsOnDate(ds).length;
+      return `<div class="day-cell ${ds === today ? "today" : ""}" data-date="${ds}">${d.getDate()}${count ? `<span class="count">${count}</span>` : ""}</div>`;
+    }).join("");
+    body.innerHTML = `<div class="month-grid">${dow}${cellsHtml}</div>`;
+    body.querySelectorAll(".day-cell[data-date]").forEach((cell) => cell.addEventListener("click", () => {
+      calDate = new Date(cell.dataset.date + "T00:00:00");
+      calView = "day";
+      document.querySelectorAll(".calendar-tabs button").forEach((x) => x.classList.toggle("active", x.dataset.view === "day"));
+      renderCalendarView();
+    }));
+  } else if (calView === "week") {
+    const start = new Date(calDate); start.setDate(start.getDate() - start.getDay());
+    const days = [...Array(7)].map((_, i) => { const d = new Date(start); d.setDate(start.getDate() + i); return d; });
+    label.textContent = days[0].toLocaleDateString("en", { month: "short", day: "numeric" }) + " – " + days[6].toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric" });
+    body.innerHTML = `<div class="week-grid">${days.map((d) => {
+      const ds = dstr(d);
+      const items = bookingsOnDate(ds);
+      return `<div class="week-col"><div class="wc-date">${d.toLocaleDateString("en", { weekday: "short", day: "numeric" })}</div>${items.length ? items.map((b) => `<div class="wc-item">${escapeHtml(b.startTime)} · ${escapeHtml(b.facilityName || "")}<br><span style="color:var(--text-muted);">${escapeHtml(b.customerName)}</span></div>`).join("") : `<div style="color:var(--text-muted);font-size:11px;">—</div>`}</div>`;
+    }).join("")}</div>`;
+  } else {
+    const ds = dstr(calDate);
+    label.textContent = calDate.toLocaleDateString("en", { weekday: "long", month: "short", day: "numeric", year: "numeric" });
+    const items = bookingsOnDate(ds).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    body.innerHTML = `<div class="day-view-list">${items.length ? items.map((b) => `
+      <div class="day-view-item">
+        <span><b style="font-family:var(--font-mono);color:var(--accent);">${escapeHtml(b.startTime)}</b> (${b.duration}min) — ${escapeHtml(b.facilityName || "")} — ${escapeHtml(b.customerName)}</span>
+        <span class="badge badge-${b.status}">${b.status}</span>
+      </div>`).join("") : `<div class="empty-state">No bookings on this day.</div>`}</div>`;
+  }
+}
+
+/* ------------------------------------------------------------- modals --- */
+document.querySelectorAll("[data-close-modal]").forEach((btn) => btn.addEventListener("click", () => document.getElementById(btn.dataset.closeModal).classList.remove("open")));
+document.querySelectorAll(".modal-overlay").forEach((overlay) => overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.classList.remove("open"); }));
+
+</script>
+</body>
+</html>
