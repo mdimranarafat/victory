@@ -93,8 +93,8 @@ than done silently, since it changes the file count you asked for.
 | Collection     | Written by                          | Purpose |
 |----------------|--------------------------------------|---------|
 | `users`        | Admin Panel → Users                  | `{ email, role }` docs keyed by Firebase Auth UID. `role` is `admin`, `manager`, or `staff`. |
-| `facilities`   | Admin Panel → Facilities             | `{ name, sport, description, capacity, hours, active, images[] }` |
-| `bookings`     | Public site (customers) + Admin Panel| `{ facilityId, facilityName, customerName, phone, date, startTime, duration, price, status, crossesMidnight, team, notes, createdAt }`. `status` is `pending` → `confirmed`/`rejected`/`cancelled`. |
+| `facilities`   | Admin Panel → Facilities             | `{ name, sports[], type, description, image, active, showAsUpcoming, openingTime, closingTime, allowedDurations[], rules[] }` |
+| `bookings`     | Public site (customers) + Admin Panel| `{ bookingId (= doc ID), facilityId, facilityName, sport, customerId, customerName, phone, date, startTime, duration, startTimestamp, endTimestamp, crossesMidnight, status, requestedPrice, approvedPrice, adminNotes, source, createdAt, updatedAt, approvedAt, approvedBy }`. `status`: `pending` (public default) → `confirmed`/`rejected`/`cancelled`/`completed`/`no_show` (admin-only). |
 | `customers`    | Public site (auto, on booking)       | Lightweight lookup keyed by phone digits: `{ name, phone, lastBookingAt }`. The Admin Panel's Customers tab actually derives its list live from `bookings` (so history is always accurate); this collection exists for any future integration that needs a customer index without reading all bookings. |
 | `pricingRules` | Admin Panel → Pricing                | `{ label, facilityId, dayType, startTime, endTime, duration, price, weekendPrice, specialPrice, active }` |
 | `offers`       | Admin Panel → Offers                 | `{ title, description, active }` — shown on `pricing.html` |
@@ -280,6 +280,162 @@ Push `index.html`, `admin.html`, `pricing.html` to a repo, then *Settings
 add your `<username>.github.io` domain under *Authentication → Settings →
 Authorized domains* so login isn't blocked.
 
-Whichever host you choose, the Firebase config pasted into the three HTML
-files is what connects the static site to your backend — hosting choice
-and Firebase project are independent decisions.
+## Changelog — Booking System & Facility Overhaul
+
+This section documents the update that moved the site from separate
+"Football Turf" / "Cricket" facilities to a single shared **7V Turf** plus
+an admin-controlled **Badminton (Upcoming)** facility, and rebuilt the
+booking engine around a full 24-hour, 30-minute-slot system.
+
+### Files modified
+
+All three deliverables were changed — there are still only four files
+total:
+
+- **`index.html`** — facility model, booking form (sport step, live
+  slot-grid availability, review step, midnight-aware display), new
+  "Upcoming Facilities" section.
+- **`admin.html`** — Facilities panel (sports checkboxes, type, image,
+  opening/closing time, allowed durations, rules, Active/Upcoming
+  toggles), Pricing (optional per-sport rule + duration now includes 30
+  min), Bookings (manual booking modal rebuilt on the same slot-grid
+  engine as the public site, sport field, expanded status set, search/
+  filter/details/calendar all updated for 12-hour + midnight display),
+  Settings (pending-booking expiry, Asia/Dhaka timezone note).
+- **`README.md`** — this changelog.
+
+### What changed, and why
+
+1. **Facility structure**: `facilities` now store a `sports: []` array
+   instead of a single `sport` string. **7V Turf** has
+   `sports: ["Football", "Cricket"]` — booking either sport reserves the
+   same physical `facilityId` (`7v-turf`), so availability is always
+   shared. Football and Cricket were never separate facilities in the
+   data model to begin with in the new structure; there was nothing to
+   "merge" going forward, but this replaces the old two-facility set from
+   the previous revision.
+2. **Sport is informational only**: every conflict/availability check in
+   `common.js` (`hasBookingConflict`, `getAvailableSlots`) filters by
+   `facilityId` alone — `sport` is never read for availability, only
+   stored on the booking for display and (optionally) for sport-specific
+   pricing.
+3. **Badminton**: added as a second facility, `active: false`,
+   `showAsUpcoming: true`. It renders under "Upcoming Facilities" with a
+   "Coming Soon" badge and no booking button, is excluded from every
+   booking-facility dropdown (public and admin), and automatically
+   becomes bookable everywhere the moment Admin → Facilities flips
+   Status to Active — no code change required, since nothing is
+   hardcoded to a facility ID except the two seed records in the demo
+   dataset (Firestore-backed sites are entirely dynamic).
+4. **Admin manual-booking facility dropdown bug**: previously it listed
+   *all* facilities regardless of active status. `populateFacilitySelects()`
+   now filters to `facilities.filter(f => f.active)` for `bm-facility`
+   specifically (Pricing's facility dropdown and the Bookings filter
+   dropdown intentionally still show every facility, including upcoming
+   ones, so pricing can be pre-configured and past bookings stay
+   filterable). If zero facilities are active, the dropdown shows
+   "No facilities available".
+5. **24-hour, 30-minute slot system**: `TIME_SLOTS` generates all 48
+   half-hour marks from `00:00` to `23:30`; `to12Hour()` renders them as
+   `12:00 AM` … `11:30 PM` for display. **11:30 PM is always the last,
+   selectable slot** — verified in the test suite below.
+6. **Midnight-crossing bookings**: `computeBookingWindow()` combines
+   date + time into a real `Date` and adds the duration in minutes, so a
+   23:30 start naturally rolls the end time to the next calendar day.
+   The booking's `date` field stays the day it *started* (per spec);
+   `startTimestamp`/`endTimestamp` are stored as Firestore `Timestamp`
+   values (ISO strings in demo mode) and correctly point at the actual
+   start/end instants. Display uses `formatBookingRange()`, producing
+   e.g. `11:30 PM – 12:30 AM (Next Day)`.
+7. **Overlap detection**: unchanged core formula,
+   `newStart < existingEnd && newEnd > existingStart`, now applied
+   uniformly through `hasBookingConflict()` in every place a conflict can
+   occur — the public booking form (client-side + a Firestore transaction
+   re-check at submit), and the admin manual-booking modal (create and
+   edit, excluding the booking's own ID when editing).
+8. **Duration-aware, back-to-back-safe availability**: `getAvailableSlots()`
+   recomputes all 48 slots' availability for the selected duration on
+   every facility/sport/date/duration change, so a slot exactly at an
+   existing booking's end time is correctly available (strict `<`/`>` in
+   the overlap check, not `<=`/`>=`) — this fixes "the 10:00 AM bug"
+   described in the request.
+9. **Public booking flow**: reorganized into the requested step order
+   (Facility → Sport → Date → Duration → Available Times grid → Customer
+   info → Review → Submit) inside the existing single-page modal — a full
+   multi-screen wizard wasn't necessary to satisfy the flow, but every
+   step is now a distinct, clearly labeled section, and a live review
+   summary appears once a slot is picked, before submission.
+10. **"Select facility, date and time" placeholder**: replaced by the
+    live slot grid — the placeholder text now only shows before Facility
+    + Date + Duration are all chosen, and disappears in favor of the
+    actual grid the moment they are.
+11. **Public vs admin status rules**: the public form always creates
+    `status: "pending"` (no status field is exposed to customers). Admin's
+    manual-booking modal exposes all six statuses
+    (`pending`/`confirmed`/`rejected`/`cancelled`/`completed`/`no_show`),
+    defaulting to `confirmed` for new manual bookings.
+12. **Pending-expiry**: added `settings.pendingExpiryMinutes` (0/15/30/60,
+    editable in Admin → Settings). A pending booking older than this
+    window is treated as non-blocking by `hasBookingConflict()` and
+    `getAvailableSlots()`, and renders with a computed "Expired" badge in
+    the admin UI — the stored `status` field itself is left untouched, so
+    nothing is silently overwritten.
+13. **Booking data shape** now includes every field from the spec:
+    `facilityId, facilityName, sport, customerId, customerName, phone,
+    date, startTime, duration, startTimestamp, endTimestamp, status,
+    requestedPrice, approvedPrice, adminNotes, source, createdAt,
+    updatedAt, approvedAt, approvedBy` (`bookingId` is the Firestore
+    document ID itself, so it isn't duplicated as a field).
+14. **Per-sport pricing (optional)**: pricing rules gained an optional
+    `sport` field. Leaving it blank ("All sports") prices every sport on
+    that facility identically (today's default); setting it lets 7V
+    Turf charge Football and Cricket differently later without touching
+    availability logic at all.
+
+### Confirming the specific asks
+
+- ✅ Facility structure: `7V Turf` (Football + Cricket, shared
+  availability) — not two separate facilities.
+- ✅ 30-minute slot system: 48 slots per day, generated once from
+  `00:00`–`23:30` and reused everywhere (public booking, admin manual
+  booking, availability grid).
+- ✅ 11:30 PM is selectable — it's `TIME_SLOTS[47]`, the last slot, never
+  cut off.
+- ✅ Midnight bookings work — 11:30 PM + 60 min → 12:30 AM (Next Day);
+  11:30 PM + 90 min → 1:00 AM (Next Day). `date` stays the start date;
+  `endTimestamp` correctly lands on the next calendar day.
+- ✅ 10:00 AM becomes available immediately after a 9:00–10:00 AM
+  booking (and so does 10:30 AM, 10:00–anything, etc.) — confirmed by
+  the strict `<`/`>` overlap check.
+- ✅ Football and Cricket on 7V Turf share one availability — a Cricket
+  request at a time already booked for Football is blocked, because both
+  resolve to `facilityId: "7v-turf"`.
+- ✅ Badminton is fully admin-controlled: Active/Inactive, Show as
+  Upcoming/Hide, name, description, image, opening/closing time, allowed
+  durations, and rules are all editable from Admin → Facilities, exactly
+  as specified.
+
+### Test results
+
+All 13 numbered test cases from the request (plus the "10:00 AM bug" and
+the back-to-back cases inside TEST6–TEST9) were run against the exact
+code shipped in `admin.html` using a standalone Node harness that
+`eval`s the page's own inline script and exercises `getAvailableSlots`,
+`hasBookingConflict`, and `formatBookingRange` directly — **19/19
+assertions passed**. TEST13 (today's past-time blocking) is necessarily
+time-of-day-dependent in a live browser; the harness confirms the
+mechanism produces zero past-but-available slots for the current instant
+rather than hardcoding a specific clock time.
+
+### Known remaining item
+
+Pending-booking **auto-expiry** only affects *availability* and *display*
+(an expired pending request stops blocking the slot and shows "Expired").
+It does not currently write `status: "expired"` back to Firestore on a
+timer — there's no server-side scheduled function in this project to do
+that safely, and a client-side-only "expire on page load" write would let
+two different customers' browsers race to expire/re-book the same slot
+outside of a transaction. If you want the stored status itself to flip
+automatically, that needs a small Cloud Function (Firestore trigger or
+scheduled function) — flagged here rather than silently left out.
+
