@@ -147,6 +147,26 @@ section.tight { padding: 60px 0; }
 .badge-manager { background: rgba(46,249,138,.1); color: #7fe9ab; }
 .badge-staff { background: rgba(141,151,166,.14); color: var(--text-muted); }
 .badge-admin { background: rgba(46,249,138,.2); color: var(--accent); }
+.badge-completed { background: rgba(141,151,166,.16); color: var(--text-muted); }
+.badge-no_show { background: rgba(255,92,92,.1); color: var(--danger); }
+.badge-expired { background: rgba(141,151,166,.1); color: var(--text-muted); font-style: italic; }
+.badge-coming-soon { background: rgba(46,249,138,.12); color: var(--accent); }
+
+/* slot grid (public + admin booking forms) */
+.slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px,1fr)); gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px 2px; margin-bottom: 18px; }
+.slot-btn { font-family: var(--font-mono); font-size: 12px; padding: 9px 6px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg); color: var(--text-muted); cursor: pointer; text-align: center; }
+.slot-btn:hover:not(:disabled) { border-color: var(--accent-dim); color: var(--text); }
+.slot-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.slot-btn:disabled { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
+.slot-hint { font-size: 12px; color: var(--text-muted); margin: -8px 0 14px; }
+.booking-review { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; font-size: 13px; }
+.booking-review div { margin-bottom: 4px; }
+.booking-review b { color: var(--accent); }
+
+/* upcoming facility card */
+.upcoming-card { background: var(--bg-elevated); border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+.upcoming-card h3 { font-size: 20px; margin: 10px 0 8px; }
+.upcoming-card p { color: var(--text-muted); font-size: 13px; margin: 0; }
 
 .empty-state { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 44px; text-align: center; color: var(--text-muted); font-size: 14px; }
 
@@ -354,7 +374,7 @@ body.admin-body { display: flex; min-height: 100vh; }
         <div class="toolbar"><h2>Bookings</h2><div class="toolbar-actions"><button class="btn btn-primary" id="addManualBookingBtn">+ Manual Booking</button></div></div>
         <div class="filter-bar">
           <input type="text" id="bookingSearch" placeholder="Search name or phone…">
-          <select id="bookingStatusFilter"><option value="">All statuses</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select>
+          <select id="bookingStatusFilter"><option value="">All statuses</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="completed">Completed</option><option value="no_show">No-Show</option><option value="expired">Expired</option></select>
           <select id="bookingFacilityFilter"><option value="">All facilities</option></select>
           <input type="date" id="bookingDateFilter">
         </div>
@@ -385,7 +405,7 @@ body.admin-body { display: flex; min-height: 100vh; }
       <section class="panel" id="panel-facilities">
         <div class="toolbar"><h2>Facilities</h2><button class="btn btn-primary" id="addFacilityBtn">+ Add Facility</button></div>
         <table class="data-table" id="facilitiesTable">
-          <thead><tr><th>Name</th><th>Sport</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Facility</th><th>Sports</th><th>Status</th><th>Upcoming</th><th>Actions</th></tr></thead>
           <tbody></tbody>
         </table>
       </section>
@@ -395,7 +415,7 @@ body.admin-body { display: flex; min-height: 100vh; }
         <div class="toolbar"><h2>Pricing Rules</h2><button class="btn btn-primary" id="addPricingBtn">+ Add Pricing Rule</button></div>
         <p class="section-lead" style="margin-bottom:20px;">Prices on the public site and pricing page are calculated live from these rules. If nothing matches, "Contact for pricing" is shown — nothing is ever guessed.</p>
         <table class="data-table" id="pricingTable">
-          <thead><tr><th>Label</th><th>Facility</th><th>Applies to</th><th>Time Window</th><th>Duration</th><th>Price</th><th>Weekend</th><th>Special</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Label</th><th>Facility</th><th>Sport</th><th>Applies to</th><th>Time Window</th><th>Duration</th><th>Price</th><th>Weekend</th><th>Special</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody></tbody>
         </table>
       </section>
@@ -460,11 +480,16 @@ body.admin-body { display: flex; min-height: 100vh; }
       <section class="panel" id="panel-settings">
         <div class="toolbar"><h2>Site Settings</h2></div>
         <form id="settingsForm" style="max-width:480px;">
+          <p class="form-note" style="text-align:left;margin-top:0;">Business timezone: <b style="color:var(--text);">Asia/Dhaka (UTC+6)</b> — all booking times on this site are interpreted in this timezone.</p>
           <div class="field"><label for="st-phone">Public phone number</label><input type="tel" id="st-phone"></div>
           <div class="field"><label for="st-address">Address</label><textarea id="st-address" rows="2"></textarea></div>
           <div class="field"><label for="st-facebook">Facebook URL</label><input type="url" id="st-facebook"></div>
           <div class="field"><label for="st-hours">Opening hours</label><input type="text" id="st-hours" placeholder="e.g. 6:00 AM – 11:00 PM"></div>
           <div class="field"><label for="st-hero">Hero supporting text</label><textarea id="st-hero" rows="2"></textarea></div>
+          <div class="field"><label for="st-expiry">Pending booking expiry (minutes)</label>
+            <select id="st-expiry"><option value="0">Never expire</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="60">60 minutes</option></select>
+          </div>
+          <p class="form-note" style="text-align:left;">An unreviewed "Pending" request older than this no longer blocks that time slot for other customers. It still shows in Bookings (tagged Expired) so you can follow up or clean it up manually.</p>
           <button type="submit" class="btn btn-primary">Save Settings</button>
           <span id="settingsSaved" style="color:var(--accent);font-size:13px;margin-left:12px;display:none;">Saved ✓</span>
         </form>
@@ -480,14 +505,37 @@ body.admin-body { display: flex; min-height: 100vh; }
   <p class="eyebrow" id="facilityModalTitle">Add Facility</p>
   <form id="facilityForm">
     <input type="hidden" id="fm-id">
-    <div class="field"><label for="fm-name">Facility name</label><input type="text" id="fm-name" required></div>
-    <div class="field"><label for="fm-sport">Sport</label><input type="text" id="fm-sport" required placeholder="e.g. Football, Cricket, Futsal"></div>
-    <div class="field"><label for="fm-description">Description</label><textarea id="fm-description" rows="3"></textarea></div>
-    <div class="field-row">
-      <div class="field"><label for="fm-capacity">Capacity (optional)</label><input type="text" id="fm-capacity"></div>
-      <div class="field"><label for="fm-hours">Opening hours (optional)</label><input type="text" id="fm-hours"></div>
+    <div class="field"><label for="fm-name">Facility name</label><input type="text" id="fm-name" required placeholder="e.g. 7V Turf, Badminton"></div>
+    <div class="field">
+      <label>Sports played here (this facility has ONE shared availability across all sports selected)</label>
+      <div class="field-row three" style="align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-sport-check" value="Football" style="width:auto;"> Football</label>
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-sport-check" value="Cricket" style="width:auto;"> Cricket</label>
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-sport-check" value="Badminton" style="width:auto;"> Badminton</label>
+      </div>
+      <input type="text" id="fm-sport-other" placeholder="Other sport (optional, comma-separated)" style="margin-top:8px;">
     </div>
-    <div class="field"><label for="fm-active">Status</label><select id="fm-active"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+    <div class="field"><label for="fm-type">Type</label><select id="fm-type"><option value="turf">Turf</option><option value="court">Court</option><option value="pool">Pool</option><option value="other">Other</option></select></div>
+    <div class="field"><label for="fm-description">Description</label><textarea id="fm-description" rows="3"></textarea></div>
+    <div class="field"><label for="fm-image">Image URL (optional)</label><input type="url" id="fm-image"></div>
+    <div class="field-row">
+      <div class="field"><label for="fm-opening">Opening time</label><select id="fm-opening"></select></div>
+      <div class="field"><label for="fm-closing">Closing time</label><select id="fm-closing"></select></div>
+    </div>
+    <div class="field">
+      <label>Allowed booking durations</label>
+      <div class="field-row three" style="align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-dur-check" value="30" style="width:auto;"> 30 min</label>
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-dur-check" value="60" style="width:auto;"> 60 min</label>
+        <label style="display:flex;align-items:center;gap:6px;text-transform:none;font-weight:500;font-size:13px;"><input type="checkbox" class="fm-dur-check" value="90" style="width:auto;"> 90 min</label>
+      </div>
+    </div>
+    <div class="field"><label for="fm-rules">Rules (one per line, optional)</label><textarea id="fm-rules" rows="3"></textarea></div>
+    <div class="field-row">
+      <div class="field"><label for="fm-active">Status</label><select id="fm-active"><option value="true">Active (bookable now)</option><option value="false">Inactive</option></select></div>
+      <div class="field"><label for="fm-upcoming">Show as Upcoming</label><select id="fm-upcoming"><option value="false">No</option><option value="true">Yes — "Coming Soon" on site</option></select></div>
+    </div>
+    <p class="form-note" style="text-align:left;">A facility that is Inactive + "Show as Upcoming: Yes" appears under Upcoming Facilities on the public site with no booking button. Set Status to Active to make it bookable everywhere immediately.</p>
     <button type="submit" class="btn btn-primary btn-block">Save Facility</button>
   </form>
 </div></div>
@@ -500,12 +548,13 @@ body.admin-body { display: flex; min-height: 100vh; }
     <input type="hidden" id="pm-id">
     <div class="field"><label for="pm-label">Label (optional)</label><input type="text" id="pm-label" placeholder="e.g. Peak Hours, Night Rate, Off-Peak"></div>
     <div class="field"><label for="pm-facility">Facility</label><select id="pm-facility" required></select></div>
+    <div class="field"><label for="pm-sport">Sport (optional — leave as "All sports" to price every sport on this facility the same)</label><select id="pm-sport"><option value="">All sports</option></select></div>
     <div class="field"><label for="pm-daytype">Applies to</label><select id="pm-daytype"><option value="all">All days</option><option value="weekday">Weekdays</option><option value="weekend">Weekend (Fri–Sat)</option></select></div>
     <div class="field-row">
       <div class="field"><label for="pm-start">Start time</label><select id="pm-start" required></select></div>
       <div class="field"><label for="pm-end">End time</label><select id="pm-end" required></select></div>
     </div>
-    <div class="field"><label for="pm-duration">Booking duration</label><select id="pm-duration"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
+    <div class="field"><label for="pm-duration">Booking duration</label><select id="pm-duration"><option value="30">30 min</option><option value="60">60 min</option><option value="90">90 min</option></select></div>
     <div class="field-row">
       <div class="field"><label for="pm-price">Price (৳)</label><input type="number" id="pm-price" required min="0"></div>
       <div class="field"><label for="pm-weekend">Weekend price (optional)</label><input type="number" id="pm-weekend" min="0"></div>
@@ -559,18 +608,24 @@ body.admin-body { display: flex; min-height: 100vh; }
   <form id="adminBookingForm">
     <input type="hidden" id="bm-id">
     <div class="field"><label for="bm-facility">Facility</label><select id="bm-facility" required></select></div>
+    <div class="field" id="bm-sport-field"><label for="bm-sport">Sport</label><select id="bm-sport" required></select></div>
     <div class="field-row">
       <div class="field"><label for="bm-date">Date</label><input type="date" id="bm-date" required></div>
-      <div class="field"><label for="bm-start">Start time</label><select id="bm-start" required></select></div>
+      <div class="field"><label for="bm-duration">Duration</label><select id="bm-duration"><option value="30">30 min</option><option value="60" selected>60 min</option><option value="90">90 min</option></select></div>
     </div>
-    <div class="field"><label for="bm-duration">Duration</label><select id="bm-duration"><option value="60">60 min</option><option value="90">90 min</option><option value="120">120 min</option></select></div>
-    <div class="price-preview" id="bmPricePreview">Select facility, date and time</div>
+    <label>Available Times</label>
+    <p class="slot-hint" id="bmSlotHint">Select a facility, date and duration to see available times.</p>
+    <div class="slot-grid" id="bmSlotGrid"></div>
+    <input type="hidden" id="bm-start" required>
+    <div class="price-preview" id="bmPricePreview">Select a time slot</div>
     <div class="field-row">
       <div class="field"><label for="bm-name">Customer name</label><input type="text" id="bm-name" required></div>
       <div class="field"><label for="bm-phone">Phone</label><input type="tel" id="bm-phone" required></div>
     </div>
-    <div class="field"><label for="bm-status">Status</label><select id="bm-status"><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select></div>
-    <div class="field"><label for="bm-notes">Notes (optional)</label><textarea id="bm-notes" rows="2"></textarea></div>
+    <div class="field"><label for="bm-status">Status</label>
+      <select id="bm-status"><option value="confirmed">Confirmed</option><option value="pending">Pending</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="completed">Completed</option><option value="no_show">No-Show</option></select>
+    </div>
+    <div class="field"><label for="bm-notes">Admin notes (optional)</label><textarea id="bm-notes" rows="2"></textarea></div>
     <button type="submit" class="btn btn-primary btn-block">Save Booking</button>
   </form>
 </div></div>
@@ -622,7 +677,7 @@ const FIREBASE_CONFIG = {
   storageBucket: "victory-c5ef0.firebasestorage.app",
   messagingSenderId: "610792641884",
   appId: "1:610792641884:web:c994635737269e0fc09d99",
-  measurementId: "G-H6KCGFXVQT",
+  measurementId: "G-H6KCGFXVQT"
 };
 const DEMO_MODE = Object.values(FIREBASE_CONFIG).some((v) => String(v).startsWith("PASTE_"));
 
@@ -686,12 +741,13 @@ function timeRangesOverlap(newStart, newEnd, existingStart, existingEnd) {
 
 /* Returns true if a proposed booking conflicts with any existing (non-cancelled/
    non-rejected) booking on the SAME facility. Different facilities never conflict. */
-function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId }) {
+function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId, pendingExpiryMinutes }) {
   const { start: newStart, end: newEnd } = computeBookingWindow(date, startTime, duration);
-  return existingBookings.some((b) => {
+  return (existingBookings || []).some((b) => {
     if (b.id === excludeBookingId) return false;
-    if (b.facilityId !== facilityId) return false;
+    if (b.facilityId !== facilityId) return false; // sport is NEVER part of this check — same facility, shared availability
     if (b.status === "cancelled" || b.status === "rejected") return false;
+    if (isPendingExpired(b, pendingExpiryMinutes)) return false; // expired pending requests don't block
     const { start: exStart, end: exEnd } = computeBookingWindow(b.date, b.startTime, b.duration);
     return timeRangesOverlap(newStart, newEnd, exStart, exEnd);
   });
@@ -699,16 +755,89 @@ function hasBookingConflict({ facilityId, date, startTime, duration, existingBoo
 
 function isWeekend(dateObj) { const day = dateObj.getDay(); return day === 5 || day === 6; } // Fri/Sat = weekend in BD
 
+/* --------------------------------------------------------- durations --- */
+const DURATIONS = [30, 60, 90];
+function durationLabel(min) { return min < 60 ? min + " min" : (min === 60 ? "1 hour" : (min / 60) + " hours"); }
+
+/* ---------------------------------------------------- 12-hour display --- */
+function to12Hour(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  const period = h < 12 ? "AM" : "PM";
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return pad2(h12) + ":" + pad2(m) + " " + period;
+}
+function dateLabel(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+/* Full human range for a booking, e.g. "11:30 PM – 12:30 AM (Next Day)" */
+function formatBookingRange(date, startTime, duration) {
+  const { end, crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const endHHMM = pad2(end.getHours()) + ":" + pad2(end.getMinutes());
+  return {
+    dateLabel: dateLabel(date),
+    timeLabel: to12Hour(startTime) + " – " + to12Hour(endHHMM) + (crossesMidnight ? " (Next Day)" : ""),
+    crossesMidnight,
+  };
+}
+
+/* ---------------------------------------------------------- statuses --- */
+const PUBLIC_STATUS_DEFAULT = "pending";
+const ADMIN_STATUSES = ["pending", "confirmed", "rejected", "cancelled", "completed", "no_show"];
+const STATUS_LABEL = { pending: "Pending", confirmed: "Confirmed", rejected: "Rejected", cancelled: "Cancelled", completed: "Completed", no_show: "No-Show", expired: "Expired" };
+
+/* -------------------------------------------------------- pending TTL --- */
+/* Returns true if a pending booking has passed the configured expiry window
+   (settings.pendingExpiryMinutes). Expired pending requests no longer block
+   availability and render as "Expired" rather than "Pending" in the admin UI —
+   the stored status is left as "pending" (nothing is silently overwritten);
+   this is a computed, display-time-only state. */
+function isPendingExpired(booking, pendingExpiryMinutes) {
+  if (!pendingExpiryMinutes || booking.status !== "pending") return false;
+  const created = booking.createdAt && booking.createdAt.toDate ? booking.createdAt.toDate() : new Date(booking.createdAt || booking.date);
+  if (isNaN(created)) return false;
+  return (Date.now() - created.getTime()) / 60000 > Number(pendingExpiryMinutes);
+}
+function effectiveStatus(booking, pendingExpiryMinutes) {
+  return isPendingExpired(booking, pendingExpiryMinutes) ? "expired" : booking.status;
+}
+
+function customerIdFromPhone(phone) { return String(phone || "").replace(/\D/g, ""); }
+
+/* ------------------------------------------------- 24h availability --- */
+/* Returns [{ time:"HH:MM", label:"12:00 AM", available:bool }] for every
+   30-minute slot, given a facility/date/duration and the current booking
+   list. Marks past times unavailable when `date` is today, and marks a
+   slot unavailable if it would conflict with an existing (non-cancelled/
+   rejected/expired-pending) booking on the SAME facility — sport is never
+   part of this check, only facilityId. */
+function getAvailableSlots({ facilityId, date, duration, existingBookings, pendingExpiryMinutes }) {
+  const now = new Date();
+  const isToday = date === (now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()));
+  return TIME_SLOTS.map((time) => {
+    let available = true;
+    if (isToday) {
+      const slotDateTime = combineDateTime(date, time);
+      if (slotDateTime.getTime() <= now.getTime()) available = false;
+    }
+    if (available && facilityId) {
+      const conflict = hasBookingConflict({ facilityId, date, startTime: time, duration, existingBookings, pendingExpiryMinutes });
+      if (conflict) available = false;
+    }
+    return { time, label: to12Hour(time), available };
+  });
+}
+
 /* ------------------------------------------------------------- pricing --- */
 /* pricingRules[]: { id, facilityId, dayType:'weekday'|'weekend'|'all',
    startTime,endTime (HH:MM), duration (minutes), price, weekendPrice,
    specialPrice, active }
    Returns { price, rule } or { price: null, rule: null } — callers must
    render "Contact for pricing" rather than ever guessing a number. */
-function resolvePrice({ facilityId, date, startTime, duration, rules }) {
+function resolvePrice({ facilityId, date, startTime, duration, rules, sport }) {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   const weekend = isWeekend(dateObj);
-  const startMin = TIME_SLOTS.indexOf(startTime) >= 0 ? hhmmToMin(startTime) : hhmmToMin(startTime);
+  const startMin = hhmmToMin(startTime);
   const endMin = startMin + Number(duration);
 
   const candidates = (rules || []).filter((r) => {
@@ -717,6 +846,9 @@ function resolvePrice({ facilityId, date, startTime, duration, rules }) {
     if (Number(r.duration) !== Number(duration)) return false;
     if (r.dayType === "weekend" && !weekend) return false;
     if (r.dayType === "weekday" && weekend) return false;
+    // an unset r.sport applies to every sport on the facility; a set r.sport
+    // must match the sport being booked (e.g. Football-only pricing on 7V Turf)
+    if (r.sport && sport && r.sport !== sport) return false;
     const rs = hhmmToMin(r.startTime), re = hhmmToMin(r.endTime);
     // handle windows that cross midnight (e.g. 22:00 -> 02:00)
     if (re <= rs) return startMin >= rs || (endMin % 1440) <= re || endMin <= 1440;
@@ -740,20 +872,43 @@ function hhmmToMin(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h 
    so the panel can be previewed before Firebase is connected.
    ========================================================================= */
 const DEMO = {
+  /* CURRENT ACTIVE FACILITY: 7V Turf, shared by Football + Cricket (same
+     physical surface, same availability — the two sports are NOT separate
+     facilities). UPCOMING FACILITY: Badminton — inactive, admin-controlled,
+     shown under "Upcoming Facilities" with no booking button until Admin
+     flips it active. */
   facilities: [
-    { id: "football-turf", name: "Football / Futsal Turf", sport: "Football & Futsal", description: "FIFA-certified 50mm infill grass, renovated for a professional-quality playing surface.", capacity: "", hours: "", active: true, images: [] },
-    { id: "cricket", name: "Cricket", sport: "Cricket", description: "Enjoy competitive cricket sessions in a dedicated sports environment at Victory Sports Arena.", capacity: "", hours: "", active: true, images: [] },
+    {
+      id: "7v-turf", name: "7V Turf", sports: ["Football", "Cricket"], type: "turf",
+      description: "FIFA-certified 50mm infill grass. A dedicated 7V turf for football and cricket sessions — booking one sport reserves the whole turf.",
+      image: "", gallery: [], active: true, showAsUpcoming: false,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
+    {
+      id: "badminton", name: "Badminton", sports: ["Badminton"], type: "court",
+      description: "Indoor badminton court — coming soon to Victory Sports Arena.",
+      image: "", gallery: [], active: false, showAsUpcoming: true,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
   ],
   pricingRules: [],
   offers: [],
   bookings: [
-    { id: "demo-bk-1", facilityId: "football-turf", facilityName: "Football / Futsal Turf", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX", date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60, price: null, status: "pending", team: null, notes: null, createdAt: new Date().toISOString() },
+    {
+      id: "demo-bk-1", facilityId: "7v-turf", facilityName: "7V Turf", sport: "Football",
+      customerId: "8801XXXXXXXXX", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX",
+      date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60,
+      startTimestamp: null, endTimestamp: null,
+      requestedPrice: null, approvedPrice: null, price: null,
+      status: "pending", adminNotes: null, notes: null, team: null, source: "public",
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), approvedAt: null, approvedBy: null,
+    },
   ],
   events: [
     { id: "demo-ev-1", name: "BKS Tournament", sport: "Football / Futsal", date: "2025-10-01", time: "", description: "Tournament held at Victory Sports Arena.", registration: "", status: "Completed" },
   ],
   gallery: [],
-  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram." },
+  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram.", pendingExpiryMinutes: 30, timezone: "Asia/Dhaka" },
   users: [
     { id: "demo-admin", email: "admin@victorysportsarena.com", role: "admin" },
   ],
@@ -882,15 +1037,41 @@ function renderAll() {
   populateFacilitySelects();
 }
 function populateAllTimeSelects() {
-  const opts = TIME_SLOTS.map((t) => `<option value="${t}">${t}</option>`).join("");
-  ["pm-start", "pm-end", "bm-start", "em-time"].forEach((id) => { document.getElementById(id).innerHTML = opts; });
+  const opts = TIME_SLOTS.map((t) => `<option value="${t}">${to12Hour(t)}</option>`).join("");
+  ["pm-start", "pm-end", "em-time", "fm-opening", "fm-closing"].forEach((id) => { document.getElementById(id).innerHTML = opts; });
 }
 function populateFacilitySelects() {
-  const opts = facilities.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
-  document.getElementById("pm-facility").innerHTML = opts;
-  document.getElementById("bm-facility").innerHTML = opts;
-  document.getElementById("bookingFacilityFilter").innerHTML = `<option value="">All facilities</option>` + opts;
+  // Manual Booking's facility dropdown must ONLY offer ACTIVE facilities (bug fix) —
+  // an inactive/upcoming facility (e.g. Badminton before Admin flips it on) must never
+  // be selectable for a real booking, even by an admin.
+  const active = facilities.filter((f) => f.active);
+  document.getElementById("bm-facility").innerHTML = active.length
+    ? active.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("")
+    : `<option value="">No facilities available</option>`;
+  // Pricing rules and the booking filter can reference any facility, including upcoming ones
+  // (so pricing can be pre-configured before a facility goes live).
+  const allOpts = facilities.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  document.getElementById("pm-facility").innerHTML = allOpts;
+  document.getElementById("bookingFacilityFilter").innerHTML = `<option value="">All facilities</option>` + allOpts;
+  populateSportSelectFor("pm-facility", "pm-sport", true);
+  populateSportSelectFor("bm-facility", "bm-sport", false);
 }
+/* Fills a <select id=sportSelectId> with the sports[] of whichever facility is
+   currently chosen in <select id=facilitySelectId>. `withAllOption` adds an
+   "All sports" option (used by the Pricing modal); manual booking always
+   requires a specific sport. */
+function populateSportSelectFor(facilitySelectId, sportSelectId, withAllOption) {
+  const facilitySel = document.getElementById(facilitySelectId);
+  const sportSel = document.getElementById(sportSelectId);
+  const f = facilities.find((x) => x.id === facilitySel.value);
+  const sports = (f && f.sports) || [];
+  const optsHtml = sports.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+  sportSel.innerHTML = (withAllOption ? `<option value="">All sports</option>` : "") + optsHtml;
+  const sportField = document.getElementById(sportSelectId + "-field");
+  if (sportField) sportField.style.display = sports.length <= 1 && !withAllOption ? "none" : "block";
+}
+document.getElementById("pm-facility").addEventListener("change", () => populateSportSelectFor("pm-facility", "pm-sport", true));
+document.getElementById("bm-facility").addEventListener("change", () => { populateSportSelectFor("bm-facility", "bm-sport", false); regenerateAdminSlotGrid(); });
 
 /* -------------------------------------------------------------- stats --- */
 function todayStr() { const d = new Date(); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
@@ -911,7 +1092,10 @@ function renderDashboardStats() {
 
   const recentBody = document.querySelector("#recentBookingsTable tbody");
   const recent = bookings.slice(0, 5);
-  recentBody.innerHTML = recent.length ? recent.map((b) => `<tr><td>${escapeHtml(b.customerName)}</td><td>${escapeHtml(b.facilityName || "")}</td><td>${escapeHtml(b.date)}</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No bookings yet.</td></tr>`;
+  recentBody.innerHTML = recent.length ? recent.map((b) => {
+    const st = effectiveStatus(b, settings.pendingExpiryMinutes);
+    return `<tr><td>${escapeHtml(b.customerName)}</td><td>${escapeHtml(b.facilityName || "")}</td><td>${escapeHtml(b.date)}</td><td><span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span></td></tr>`;
+  }).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No bookings yet.</td></tr>`;
 }
 
 /* ------------------------------------------------------------ bookings --- */
@@ -922,7 +1106,7 @@ function filteredBookings() {
   const date = document.getElementById("bookingDateFilter").value;
   return bookings.filter((b) => {
     if (q && !((b.customerName || "").toLowerCase().includes(q) || (b.phone || "").toLowerCase().includes(q))) return false;
-    if (status && b.status !== status) return false;
+    if (status && effectiveStatus(b, settings.pendingExpiryMinutes) !== status) return false;
     if (facilityId && b.facilityId !== facilityId) return false;
     if (date && b.date !== date) return false;
     return true;
@@ -931,20 +1115,24 @@ function filteredBookings() {
 function renderBookings() {
   const tbody = document.querySelector("#bookingsTable tbody");
   const list = filteredBookings();
-  tbody.innerHTML = list.length ? list.map((b) => `
+  tbody.innerHTML = list.length ? list.map((b) => {
+    const st = effectiveStatus(b, settings.pendingExpiryMinutes);
+    const { dateLabel: dl, timeLabel } = formatBookingRange(b.date, b.startTime, b.duration);
+    return `
     <tr>
       <td><a href="#" data-action="view-booking" data-id="${b.id}" style="color:var(--text);text-decoration:underline;">${escapeHtml(b.customerName)}</a></td>
       <td>${escapeHtml(b.phone)}</td>
-      <td>${escapeHtml(b.facilityName || "")}</td>
-      <td>${escapeHtml(b.date)} · ${escapeHtml(b.startTime)} (${b.duration}min)${b.crossesMidnight ? " ⏭" : ""}</td>
+      <td>${escapeHtml(b.facilityName || "")}${b.sport ? " · " + escapeHtml(b.sport) : ""}</td>
+      <td>${dl}<br><span style="color:var(--text-muted);">${timeLabel}</span></td>
       <td>${b.price != null ? formatBDT(b.price) : "Contact for pricing"}</td>
-      <td><span class="badge badge-${b.status}">${b.status}</span></td>
+      <td><span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span></td>
       <td class="actions">
         ${b.status === "pending" ? `<button class="mini-btn approve" data-action="approve" data-id="${b.id}">Approve</button><button class="mini-btn reject" data-action="reject" data-id="${b.id}">Reject</button>` : ""}
         <button class="mini-btn" data-action="edit-booking" data-id="${b.id}">Edit</button>
         ${b.status !== "cancelled" ? `<button class="mini-btn" data-action="cancel" data-id="${b.id}">Cancel</button>` : ""}
       </td>
-    </tr>`).join("") : `<tr><td colspan="7" style="color:var(--text-muted);">No bookings match.</td></tr>`;
+    </tr>`;
+  }).join("") : `<tr><td colspan="7" style="color:var(--text-muted);">No bookings match.</td></tr>`;
 }
 ["bookingSearch", "bookingStatusFilter", "bookingFacilityFilter", "bookingDateFilter"].forEach((id) => {
   document.getElementById(id).addEventListener("input", renderBookings);
@@ -963,58 +1151,100 @@ document.querySelector("#bookingsTable tbody").addEventListener("click", async (
   if (action === "edit-booking") return openBookingModal(booking);
   const statusMap = { approve: "confirmed", reject: "rejected", cancel: "cancelled" };
   if (statusMap[action]) {
+    const nowIso = new Date().toISOString();
     booking.status = statusMap[action];
-    if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(id).update({ status: statusMap[action] });
+    booking.updatedAt = nowIso;
+    const patch = { status: statusMap[action], updatedAt: DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp() };
+    if (statusMap[action] === "confirmed") {
+      booking.approvedAt = nowIso; booking.approvedBy = currentUser.email; booking.approvedPrice = booking.price;
+      patch.approvedAt = patch.updatedAt; patch.approvedBy = currentUser.email; patch.approvedPrice = booking.price;
+    }
+    if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(id).update(patch);
     renderBookings(); renderDashboardStats(); renderCalendarView();
   }
 });
 
 function openBookingDetails(b) {
+  const st = effectiveStatus(b, settings.pendingExpiryMinutes);
+  const { dateLabel: dl, timeLabel } = formatBookingRange(b.date, b.startTime, b.duration);
   document.getElementById("bookingDetailsBody").innerHTML = `
     <div class="field"><label>Customer</label><div>${escapeHtml(b.customerName)} — ${escapeHtml(b.phone)}</div></div>
-    <div class="field"><label>Facility</label><div>${escapeHtml(b.facilityName || "")}</div></div>
-    <div class="field"><label>Date / Time</label><div>${escapeHtml(b.date)} at ${escapeHtml(b.startTime)}, ${b.duration} minutes${b.crossesMidnight ? " (crosses midnight)" : ""}</div></div>
-    <div class="field"><label>Price</label><div>${b.price != null ? formatBDT(b.price) : "Contact for pricing"}</div></div>
-    <div class="field"><label>Status</label><div><span class="badge badge-${b.status}">${b.status}</span></div></div>
+    <div class="field"><label>Facility / Sport</label><div>${escapeHtml(b.facilityName || "")}${b.sport ? " · " + escapeHtml(b.sport) : ""}</div></div>
+    <div class="field"><label>Date / Time</label><div>${dl}<br>${timeLabel}</div></div>
+    <div class="field"><label>Price</label><div>${b.price != null ? formatBDT(b.price) : "Contact for pricing"}${b.requestedPrice != null && b.approvedPrice != null && b.requestedPrice !== b.approvedPrice ? ` <span style="color:var(--text-muted);">(requested ${formatBDT(b.requestedPrice)})</span>` : ""}</div></div>
+    <div class="field"><label>Status</label><div><span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span></div></div>
+    <div class="field"><label>Source</label><div>${b.source === "admin" ? "Created by Admin" : "Public booking request"}</div></div>
     ${b.team ? `<div class="field"><label>Team / Company</label><div>${escapeHtml(b.team)}</div></div>` : ""}
-    ${b.notes ? `<div class="field"><label>Notes</label><div>${escapeHtml(b.notes)}</div></div>` : ""}
+    ${b.notes ? `<div class="field"><label>Customer Notes</label><div>${escapeHtml(b.notes)}</div></div>` : ""}
+    ${b.adminNotes ? `<div class="field"><label>Admin Notes</label><div>${escapeHtml(b.adminNotes)}</div></div>` : ""}
+    ${b.approvedBy ? `<div class="field"><label>Approved By</label><div>${escapeHtml(b.approvedBy)}</div></div>` : ""}
   `;
   document.getElementById("bookingDetailsModal").classList.add("open");
 }
 
-/* manual booking / edit */
+/* manual booking / edit — uses the SAME availability engine (getAvailableSlots /
+   hasBookingConflict) as the public booking form. */
 const bookingModal = document.getElementById("bookingModal");
 document.getElementById("addManualBookingBtn").addEventListener("click", () => openBookingModal());
+let adminSelectedStart = null;
 function openBookingModal(b) {
   document.getElementById("bookingModalTitle").textContent = b ? "Edit Booking" : "Manual Booking";
   document.getElementById("bookingFormError").classList.remove("show");
   document.getElementById("bm-id").value = b ? b.id : "";
-  document.getElementById("bm-facility").value = b ? b.facilityId : (facilities[0] ? facilities[0].id : "");
+  const activeFacilities = facilities.filter((f) => f.active);
+  document.getElementById("bm-facility").value = b ? b.facilityId : (activeFacilities[0] ? activeFacilities[0].id : "");
+  populateSportSelectFor("bm-facility", "bm-sport", false);
+  if (b && b.sport) document.getElementById("bm-sport").value = b.sport;
   document.getElementById("bm-date").value = b ? b.date : todayStr();
-  document.getElementById("bm-start").value = b ? b.startTime : "18:00";
   document.getElementById("bm-duration").value = b ? String(b.duration) : "60";
   document.getElementById("bm-name").value = b ? b.customerName : "";
   document.getElementById("bm-phone").value = b ? b.phone : "";
   document.getElementById("bm-status").value = b ? b.status : "confirmed";
-  document.getElementById("bm-notes").value = b ? (b.notes || "") : "";
-  updateAdminPricePreview();
+  document.getElementById("bm-notes").value = b ? (b.adminNotes || "") : "";
+  adminSelectedStart = b ? b.startTime : null;
+  document.getElementById("bm-start").value = adminSelectedStart || "";
+  regenerateAdminSlotGrid();
   bookingModal.classList.add("open");
 }
+function regenerateAdminSlotGrid() {
+  const facilityId = document.getElementById("bm-facility").value;
+  const date = document.getElementById("bm-date").value;
+  const duration = document.getElementById("bm-duration").value;
+  const excludeId = document.getElementById("bm-id").value || null;
+  const grid = document.getElementById("bmSlotGrid");
+  const hint = document.getElementById("bmSlotHint");
+  if (!facilityId || !date || !duration) { grid.innerHTML = ""; hint.style.display = "block"; updateAdminPricePreview(); return; }
+  hint.style.display = "none";
+  const slots = getAvailableSlots({ facilityId, date, duration, existingBookings: bookings.filter((x) => x.id !== excludeId), pendingExpiryMinutes: settings.pendingExpiryMinutes });
+  grid.innerHTML = slots.map((s) => {
+    const isSelected = s.time === adminSelectedStart;
+    // when editing, the booking's own current slot should still show as pickable even
+    // though (before exclusion) it would otherwise appear taken by itself
+    return `<button type="button" class="slot-btn ${isSelected ? "selected" : ""}" data-time="${s.time}" ${s.available ? "" : "disabled"}>${s.label}</button>`;
+  }).join("");
+  updateAdminPricePreview();
+}
+document.getElementById("bmSlotGrid").addEventListener("click", (e) => {
+  const btn = e.target.closest(".slot-btn"); if (!btn || btn.disabled) return;
+  [...document.querySelectorAll("#bmSlotGrid .slot-btn")].forEach((b) => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  adminSelectedStart = btn.dataset.time;
+  document.getElementById("bm-start").value = adminSelectedStart;
+  updateAdminPricePreview();
+});
 function updateAdminPricePreview() {
   const facilityId = document.getElementById("bm-facility").value;
   const date = document.getElementById("bm-date").value;
-  const start = document.getElementById("bm-start").value;
   const duration = document.getElementById("bm-duration").value;
+  const sport = document.getElementById("bm-sport").value;
   const el = document.getElementById("bmPricePreview");
-  if (!facilityId || !date || !start) { el.innerHTML = "Select facility, date and time"; el.classList.remove("err"); return; }
-  const excludeId = document.getElementById("bm-id").value || null;
-  const conflict = hasBookingConflict({ facilityId, date, startTime: start, duration, existingBookings: bookings, excludeBookingId: excludeId });
-  if (conflict) { el.innerHTML = "⚠ Conflicts with an existing booking on this facility."; el.classList.add("err"); return; }
+  if (!facilityId || !date || !adminSelectedStart) { el.innerHTML = "Select facility, date and a time slot"; el.classList.remove("err"); return; }
   el.classList.remove("err");
-  const { price } = resolvePrice({ facilityId, date, startTime: start, duration, rules: pricingRules });
-  el.innerHTML = `Price: <b>${formatBDT(price)}</b>`;
+  const { price } = resolvePrice({ facilityId, date, startTime: adminSelectedStart, duration, rules: pricingRules, sport });
+  const { timeLabel } = formatBookingRange(date, adminSelectedStart, duration);
+  el.innerHTML = `${timeLabel} · Price: <b>${formatBDT(price)}</b>`;
 }
-["bm-facility", "bm-date", "bm-start", "bm-duration"].forEach((id) => document.getElementById(id).addEventListener("change", updateAdminPricePreview));
+["bm-date", "bm-duration"].forEach((id) => document.getElementById(id).addEventListener("change", regenerateAdminSlotGrid));
 
 document.getElementById("adminBookingForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -1026,28 +1256,38 @@ document.getElementById("adminBookingForm").addEventListener("submit", async (e)
   const errEl = document.getElementById("bookingFormError");
   errEl.classList.remove("show");
 
-  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings, excludeBookingId: id || null })) {
-    errEl.textContent = "This facility already has a booking that overlaps this time window.";
+  if (!startTime) { errEl.textContent = "Please choose a time slot."; errEl.classList.add("show"); return; }
+  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings, excludeBookingId: id || null, pendingExpiryMinutes: settings.pendingExpiryMinutes })) {
+    errEl.textContent = "This time overlaps with an existing booking.";
     errEl.classList.add("show");
+    regenerateAdminSlotGrid();
     return;
   }
   const facility = facilities.find((f) => f.id === facilityId);
-  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules });
-  const { crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const sport = document.getElementById("bm-sport").value;
+  const status = document.getElementById("bm-status").value;
+  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules, sport });
+  const { start, end, crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const phone = document.getElementById("bm-phone").value;
+  const nowIso = new Date().toISOString();
   const data = {
-    facilityId, facilityName: facility ? facility.name : "",
-    date, startTime, duration: Number(duration), crossesMidnight, price,
-    customerName: document.getElementById("bm-name").value,
-    phone: document.getElementById("bm-phone").value,
-    status: document.getElementById("bm-status").value,
-    notes: document.getElementById("bm-notes").value || null,
+    facilityId, facilityName: facility ? facility.name : "", sport: sport || null,
+    date, startTime, duration: Number(duration), crossesMidnight,
+    startTimestamp: DEMO_MODE ? start.toISOString() : firebase.firestore.Timestamp.fromDate(start),
+    endTimestamp: DEMO_MODE ? end.toISOString() : firebase.firestore.Timestamp.fromDate(end),
+    price, requestedPrice: price, approvedPrice: status === "confirmed" ? price : null,
+    customerId: customerIdFromPhone(phone), customerName: document.getElementById("bm-name").value, phone,
+    status, adminNotes: document.getElementById("bm-notes").value || null, source: "admin",
+    updatedAt: DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp(),
+    approvedAt: status === "confirmed" ? (DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp()) : null,
+    approvedBy: status === "confirmed" ? currentUser.email : null,
   };
   const idx = bookings.findIndex((b) => b.id === id);
   if (idx >= 0) {
     bookings[idx] = { ...bookings[idx], ...data };
     if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(id).update(data);
   } else {
-    const newBooking = { id: newId("bk"), ...data, createdAt: DEMO_MODE ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp() };
+    const newBooking = { id: newId("bk"), ...data, createdAt: DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp() };
     bookings.unshift(newBooking);
     if (!DEMO_MODE) await db.collection(COLLECTIONS.bookings).doc(newBooking.id).set({ ...data, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
   }
@@ -1060,10 +1300,11 @@ function renderFacilities() {
   const tbody = document.querySelector("#facilitiesTable tbody");
   tbody.innerHTML = facilities.length ? facilities.map((f) => `
     <tr>
-      <td>${escapeHtml(f.name)}</td><td>${escapeHtml(f.sport || "")}</td>
+      <td>${escapeHtml(f.name)}</td><td>${escapeHtml((f.sports || []).join(", "))}</td>
       <td><span class="badge badge-${f.active ? "active" : "inactive"}">${f.active ? "Active" : "Inactive"}</span></td>
+      <td>${f.showAsUpcoming ? `<span class="badge badge-coming-soon">Coming Soon</span>` : "—"}</td>
       <td class="actions"><button class="mini-btn" data-action="edit-facility" data-id="${f.id}">Edit</button><button class="mini-btn reject" data-action="delete-facility" data-id="${f.id}">Delete</button></td>
-    </tr>`).join("") : `<tr><td colspan="4" style="color:var(--text-muted);">No facilities yet — add your first one.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="5" style="color:var(--text-muted);">No facilities yet — add your first one.</td></tr>`;
 }
 const facilityModal = document.getElementById("facilityModal");
 document.getElementById("addFacilityBtn").addEventListener("click", () => openFacilityModal());
@@ -1082,20 +1323,41 @@ function openFacilityModal(f) {
   document.getElementById("facilityModalTitle").textContent = f ? "Edit Facility" : "Add Facility";
   document.getElementById("fm-id").value = f ? f.id : "";
   document.getElementById("fm-name").value = f ? f.name : "";
-  document.getElementById("fm-sport").value = f ? f.sport : "";
+  const sports = f ? (f.sports || []) : [];
+  const knownSports = ["Football", "Cricket", "Badminton"];
+  document.querySelectorAll(".fm-sport-check").forEach((cb) => { cb.checked = sports.includes(cb.value); });
+  document.getElementById("fm-sport-other").value = sports.filter((s) => !knownSports.includes(s)).join(", ");
+  document.getElementById("fm-type").value = f ? (f.type || "turf") : "turf";
   document.getElementById("fm-description").value = f ? (f.description || "") : "";
-  document.getElementById("fm-capacity").value = f ? (f.capacity || "") : "";
-  document.getElementById("fm-hours").value = f ? (f.hours || "") : "";
+  document.getElementById("fm-image").value = f ? (f.image || "") : "";
+  document.getElementById("fm-opening").value = f ? (f.openingTime || "00:00") : "00:00";
+  document.getElementById("fm-closing").value = f ? (f.closingTime || "23:30") : "23:30";
+  const durs = f ? (f.allowedDurations || [30, 60, 90]) : [30, 60, 90];
+  document.querySelectorAll(".fm-dur-check").forEach((cb) => { cb.checked = durs.includes(Number(cb.value)); });
+  document.getElementById("fm-rules").value = f && f.rules ? f.rules.join("\n") : "";
   document.getElementById("fm-active").value = f ? String(f.active) : "true";
+  document.getElementById("fm-upcoming").value = f ? String(!!f.showAsUpcoming) : "false";
   facilityModal.classList.add("open");
 }
 document.getElementById("facilityForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = document.getElementById("fm-id").value || newId("facility");
+  const checkedSports = [...document.querySelectorAll(".fm-sport-check:checked")].map((cb) => cb.value);
+  const otherSports = document.getElementById("fm-sport-other").value.split(",").map((s) => s.trim()).filter(Boolean);
+  const checkedDurs = [...document.querySelectorAll(".fm-dur-check:checked")].map((cb) => Number(cb.value));
+  const rules = document.getElementById("fm-rules").value.split("\n").map((r) => r.trim()).filter(Boolean);
   const data = {
-    name: document.getElementById("fm-name").value, sport: document.getElementById("fm-sport").value,
-    description: document.getElementById("fm-description").value, capacity: document.getElementById("fm-capacity").value,
-    hours: document.getElementById("fm-hours").value, active: document.getElementById("fm-active").value === "true", images: [],
+    name: document.getElementById("fm-name").value,
+    sports: [...checkedSports, ...otherSports],
+    type: document.getElementById("fm-type").value,
+    description: document.getElementById("fm-description").value,
+    image: document.getElementById("fm-image").value,
+    openingTime: document.getElementById("fm-opening").value,
+    closingTime: document.getElementById("fm-closing").value,
+    allowedDurations: checkedDurs.length ? checkedDurs : [30, 60, 90],
+    rules, gallery: [],
+    active: document.getElementById("fm-active").value === "true",
+    showAsUpcoming: document.getElementById("fm-upcoming").value === "true",
   };
   const idx = facilities.findIndex((f) => f.id === id);
   if (idx >= 0) facilities[idx] = { ...facilities[idx], ...data }; else facilities.push({ id, ...data });
@@ -1112,6 +1374,7 @@ function renderPricing() {
     return `<tr>
       <td>${escapeHtml(r.label || "—")}</td>
       <td>${escapeHtml(facility ? facility.name : r.facilityId)}</td>
+      <td>${escapeHtml(r.sport || "All sports")}</td>
       <td>${escapeHtml(r.dayType)}</td>
       <td>${escapeHtml(r.startTime)}–${escapeHtml(r.endTime)}</td>
       <td>${r.duration} min</td>
@@ -1121,7 +1384,7 @@ function renderPricing() {
       <td><span class="badge badge-${r.active ? "active" : "inactive"}">${r.active ? "Active" : "Inactive"}</span></td>
       <td class="actions"><button class="mini-btn" data-action="edit-pricing" data-id="${r.id}">Edit</button><button class="mini-btn reject" data-action="delete-pricing" data-id="${r.id}">Delete</button></td>
     </tr>`;
-  }).join("") : `<tr><td colspan="10" style="color:var(--text-muted);">No pricing rules yet.</td></tr>`;
+  }).join("") : `<tr><td colspan="11" style="color:var(--text-muted);">No pricing rules yet.</td></tr>`;
 }
 const pricingModal = document.getElementById("pricingModal");
 document.getElementById("addPricingBtn").addEventListener("click", () => openPricingModal());
@@ -1140,6 +1403,8 @@ function openPricingModal(r) {
   document.getElementById("pm-id").value = r ? r.id : "";
   document.getElementById("pm-label").value = r ? (r.label || "") : "";
   document.getElementById("pm-facility").value = r ? r.facilityId : (facilities[0] ? facilities[0].id : "");
+  populateSportSelectFor("pm-facility", "pm-sport", true);
+  document.getElementById("pm-sport").value = r ? (r.sport || "") : "";
   document.getElementById("pm-daytype").value = r ? r.dayType : "all";
   document.getElementById("pm-start").value = r ? r.startTime : "18:00";
   document.getElementById("pm-end").value = r ? r.endTime : "22:00";
@@ -1156,6 +1421,7 @@ document.getElementById("pricingForm").addEventListener("submit", async (e) => {
   const data = {
     label: document.getElementById("pm-label").value || null,
     facilityId: document.getElementById("pm-facility").value,
+    sport: document.getElementById("pm-sport").value || null,
     dayType: document.getElementById("pm-daytype").value,
     startTime: document.getElementById("pm-start").value,
     endTime: document.getElementById("pm-end").value,
@@ -1365,7 +1631,7 @@ document.querySelector("#customersTable tbody").addEventListener("click", (e) =>
     <div class="field"><label>Phone</label><div>${escapeHtml(c.phone)}</div></div>
     <table class="data-table" style="margin-top:10px;">
       <thead><tr><th>Facility</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
-      <tbody>${c.bookings.map((b) => `<tr><td>${escapeHtml(b.facilityName || "")}</td><td>${escapeHtml(b.date)}</td><td>${escapeHtml(b.startTime)}</td><td><span class="badge badge-${b.status}">${b.status}</span></td></tr>`).join("")}</tbody>
+      <tbody>${c.bookings.map((b) => { const st = effectiveStatus(b, settings.pendingExpiryMinutes); const { dateLabel: dl, timeLabel } = formatBookingRange(b.date, b.startTime, b.duration); return `<tr><td>${escapeHtml(b.facilityName || "")}${b.sport ? " · " + escapeHtml(b.sport) : ""}</td><td>${dl}</td><td>${timeLabel}</td><td><span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span></td></tr>`; }).join("")}</tbody>
     </table>`;
   document.getElementById("customerModal").classList.add("open");
 });
@@ -1425,6 +1691,7 @@ function renderSettingsForm() {
   document.getElementById("st-facebook").value = settings.facebook || "";
   document.getElementById("st-hours").value = settings.hours || "";
   document.getElementById("st-hero").value = settings.hero || "";
+  document.getElementById("st-expiry").value = String(settings.pendingExpiryMinutes || 0);
 }
 document.getElementById("settingsForm").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -1432,8 +1699,11 @@ document.getElementById("settingsForm").addEventListener("submit", async (e) => 
     phone: document.getElementById("st-phone").value, address: document.getElementById("st-address").value,
     facebook: document.getElementById("st-facebook").value, hours: document.getElementById("st-hours").value,
     hero: document.getElementById("st-hero").value,
+    pendingExpiryMinutes: Number(document.getElementById("st-expiry").value) || 0,
+    timezone: "Asia/Dhaka",
   };
   if (!DEMO_MODE) await db.collection(COLLECTIONS.settings).doc("site").set(settings, { merge: true });
+  renderBookings(); renderDashboardStats();
   const saved = document.getElementById("settingsSaved");
   saved.style.display = "inline"; setTimeout(() => (saved.style.display = "none"), 2000);
 });
@@ -1492,17 +1762,20 @@ function renderCalendarView() {
     body.innerHTML = `<div class="week-grid">${days.map((d) => {
       const ds = dstr(d);
       const items = bookingsOnDate(ds);
-      return `<div class="week-col"><div class="wc-date">${d.toLocaleDateString("en", { weekday: "short", day: "numeric" })}</div>${items.length ? items.map((b) => `<div class="wc-item">${escapeHtml(b.startTime)} · ${escapeHtml(b.facilityName || "")}<br><span style="color:var(--text-muted);">${escapeHtml(b.customerName)}</span></div>`).join("") : `<div style="color:var(--text-muted);font-size:11px;">—</div>`}</div>`;
+      return `<div class="week-col"><div class="wc-date">${d.toLocaleDateString("en", { weekday: "short", day: "numeric" })}</div>${items.length ? items.map((b) => `<div class="wc-item">${to12Hour(b.startTime)} · ${escapeHtml(b.facilityName || "")}${b.sport ? " · " + escapeHtml(b.sport) : ""}<br><span style="color:var(--text-muted);">${escapeHtml(b.customerName)}</span></div>`).join("") : `<div style="color:var(--text-muted);font-size:11px;">—</div>`}</div>`;
     }).join("")}</div>`;
   } else {
     const ds = dstr(calDate);
     label.textContent = calDate.toLocaleDateString("en", { weekday: "long", month: "short", day: "numeric", year: "numeric" });
     const items = bookingsOnDate(ds).sort((a, b) => a.startTime.localeCompare(b.startTime));
-    body.innerHTML = `<div class="day-view-list">${items.length ? items.map((b) => `
-      <div class="day-view-item">
-        <span><b style="font-family:var(--font-mono);color:var(--accent);">${escapeHtml(b.startTime)}</b> (${b.duration}min) — ${escapeHtml(b.facilityName || "")} — ${escapeHtml(b.customerName)}</span>
-        <span class="badge badge-${b.status}">${b.status}</span>
-      </div>`).join("") : `<div class="empty-state">No bookings on this day.</div>`}</div>`;
+    body.innerHTML = `<div class="day-view-list">${items.length ? items.map((b) => {
+      const st = effectiveStatus(b, settings.pendingExpiryMinutes);
+      const { timeLabel } = formatBookingRange(b.date, b.startTime, b.duration);
+      return `<div class="day-view-item">
+        <span><b style="font-family:var(--font-mono);color:var(--accent);">${timeLabel}</b> — ${escapeHtml(b.facilityName || "")}${b.sport ? " · " + escapeHtml(b.sport) : ""} — ${escapeHtml(b.customerName)}</span>
+        <span class="badge badge-${st}">${STATUS_LABEL[st] || st}</span>
+      </div>`;
+    }).join("") : `<div class="empty-state">No bookings on this day.</div>`}</div>`;
   }
 }
 
