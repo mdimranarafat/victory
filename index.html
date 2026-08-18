@@ -148,6 +148,26 @@ section.tight { padding: 60px 0; }
 .badge-manager { background: rgba(46,249,138,.1); color: #7fe9ab; }
 .badge-staff { background: rgba(141,151,166,.14); color: var(--text-muted); }
 .badge-admin { background: rgba(46,249,138,.2); color: var(--accent); }
+.badge-completed { background: rgba(141,151,166,.16); color: var(--text-muted); }
+.badge-no_show { background: rgba(255,92,92,.1); color: var(--danger); }
+.badge-expired { background: rgba(141,151,166,.1); color: var(--text-muted); font-style: italic; }
+.badge-coming-soon { background: rgba(46,249,138,.12); color: var(--accent); }
+
+/* slot grid (public + admin booking forms) */
+.slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px,1fr)); gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px 2px; margin-bottom: 18px; }
+.slot-btn { font-family: var(--font-mono); font-size: 12px; padding: 9px 6px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg); color: var(--text-muted); cursor: pointer; text-align: center; }
+.slot-btn:hover:not(:disabled) { border-color: var(--accent-dim); color: var(--text); }
+.slot-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.slot-btn:disabled { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
+.slot-hint { font-size: 12px; color: var(--text-muted); margin: -8px 0 14px; }
+.booking-review { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; font-size: 13px; }
+.booking-review div { margin-bottom: 4px; }
+.booking-review b { color: var(--accent); }
+
+/* upcoming facility card */
+.upcoming-card { background: var(--bg-elevated); border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+.upcoming-card h3 { font-size: 20px; margin: 10px 0 8px; }
+.upcoming-card p { color: var(--text-muted); font-size: 13px; margin: 0; }
 
 .empty-state { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 44px; text-align: center; color: var(--text-muted); font-size: 14px; }
 
@@ -332,17 +352,25 @@ body.admin-body { display: flex; min-height: 100vh; }
   </div>
 </section>
 
+<section class="tight" id="upcoming-facilities" style="display:none;">
+  <div class="container">
+    <p class="eyebrow">Coming soon</p>
+    <h2 class="section-title" style="font-size:clamp(28px,3.6vw,40px);">Upcoming Facilities</h2>
+    <div class="card-grid" id="upcomingGrid"></div>
+  </div>
+</section>
+
 <section class="tight">
   <div class="container">
     <p class="eyebrow">Sports Experience</p>
     <div class="turf-highlight">
       <div>
         <h2 class="section-title" style="font-size:clamp(28px,3.6vw,40px);">Premium FIFA&#8209;Certified Turf</h2>
-        <p class="section-lead" style="margin-bottom:0;">Victory Sports Arena features FIFA-certified 50&nbsp;mm infill grass, providing a professional-quality playing surface for football and futsal. Cricket sessions run in a dedicated environment for competitive play.</p>
+        <p class="section-lead" style="margin-bottom:0;">Victory Sports Arena's 7V Turf features FIFA-certified 50&nbsp;mm infill grass, providing a professional-quality playing surface shared by football and cricket sessions.</p>
         <div class="stat-strip">
           <div class="stat"><b>50mm</b><span>Infill Grass</span></div>
           <div class="stat"><b>FIFA</b><span>Certified Turf</span></div>
-          <div class="stat"><b>3</b><span>Sports Hosted</span></div>
+          <div class="stat"><b>2</b><span>Sports on 7V Turf</span></div>
         </div>
       </div>
       <div class="turf-visual" aria-hidden="true"></div>
@@ -477,26 +505,32 @@ body.admin-body { display: flex; min-height: 100vh; }
     <h2 class="section-title" style="font-size:28px;margin-bottom:22px;">Book Your Slot</h2>
     <div class="form-error-banner" id="bookingError"></div>
     <form id="bookingForm">
-      <div class="field"><label for="bf-facility">Facility</label><select id="bf-facility" required></select></div>
+      <div class="field"><label for="bf-facility">Step 1 · Facility</label><select id="bf-facility" required></select></div>
+      <div class="field" id="bf-sport-field"><label for="bf-sport">Step 2 · Sport</label><select id="bf-sport" required></select></div>
       <div class="field-row">
-        <div class="field"><label for="bf-date">Date</label><input type="date" id="bf-date" required></div>
-        <div class="field"><label for="bf-start">Start time</label><select id="bf-start" required></select></div>
+        <div class="field"><label for="bf-date">Step 3 · Date</label><input type="date" id="bf-date" required></div>
+        <div class="field">
+          <label for="bf-duration">Step 4 · Duration</label>
+          <select id="bf-duration" required>
+            <option value="30">30 min</option>
+            <option value="60" selected>1 hour</option>
+            <option value="90">1.5 hours</option>
+          </select>
+        </div>
       </div>
-      <div class="field">
-        <label for="bf-duration">Duration</label>
-        <select id="bf-duration" required>
-          <option value="60">1 hour</option>
-          <option value="90">1.5 hours</option>
-          <option value="120">2 hours</option>
-        </select>
-      </div>
-      <div class="price-preview" id="pricePreview">Select a facility, date and time to see pricing</div>
+      <label>Step 5 · Available Times</label>
+      <p class="slot-hint" id="slotHint">Select a facility, sport, date and duration to see available times.</p>
+      <div class="slot-grid" id="slotGrid"></div>
+      <input type="hidden" id="bf-start" required>
+      <div class="price-preview" id="pricePreview">Select a time slot to see pricing</div>
+      <div class="field"><label>Step 6 · Your Information</label></div>
       <div class="field-row">
         <div class="field"><label for="bf-name">Full name</label><input type="text" id="bf-name" required></div>
         <div class="field"><label for="bf-phone">Phone number</label><input type="tel" id="bf-phone" required></div>
       </div>
       <div class="field"><label for="bf-team">Team / company name (optional)</label><input type="text" id="bf-team"></div>
       <div class="field"><label for="bf-notes">Special request / notes (optional)</label><textarea id="bf-notes" rows="3"></textarea></div>
+      <div class="booking-review" id="bookingReview" style="display:none;"></div>
       <button type="submit" class="btn btn-primary btn-block" id="submitBookingBtn">Submit Booking Request</button>
       <p class="form-note">This is a request, not a confirmation. Victory Sports Arena will review and confirm your booking.</p>
     </form>
@@ -504,6 +538,7 @@ body.admin-body { display: flex; min-height: 100vh; }
       <div class="check">✓</div>
       <h3 style="font-size:20px;text-transform:none;font-family:var(--font-body);margin-bottom:10px;">Request received</h3>
       <p style="color:var(--text-muted);font-size:14px;">Your booking request is <strong style="color:var(--accent);">pending review</strong>. We'll contact you at the phone number provided to confirm.</p>
+      <div class="booking-review" id="bookingSuccessDetail" style="text-align:left;"></div>
       <button class="btn btn-outline" style="margin-top:20px;" id="closeSuccessBtn">Close</button>
     </div>
   </div>
@@ -530,7 +565,7 @@ const FIREBASE_CONFIG = {
   storageBucket: "victory-c5ef0.firebasestorage.app",
   messagingSenderId: "610792641884",
   appId: "1:610792641884:web:c994635737269e0fc09d99",
-  measurementId: "G-H6KCGFXVQT",
+  measurementId: "G-H6KCGFXVQT"
 };
 const DEMO_MODE = Object.values(FIREBASE_CONFIG).some((v) => String(v).startsWith("PASTE_"));
 
@@ -594,12 +629,13 @@ function timeRangesOverlap(newStart, newEnd, existingStart, existingEnd) {
 
 /* Returns true if a proposed booking conflicts with any existing (non-cancelled/
    non-rejected) booking on the SAME facility. Different facilities never conflict. */
-function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId }) {
+function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId, pendingExpiryMinutes }) {
   const { start: newStart, end: newEnd } = computeBookingWindow(date, startTime, duration);
-  return existingBookings.some((b) => {
+  return (existingBookings || []).some((b) => {
     if (b.id === excludeBookingId) return false;
-    if (b.facilityId !== facilityId) return false;
+    if (b.facilityId !== facilityId) return false; // sport is NEVER part of this check — same facility, shared availability
     if (b.status === "cancelled" || b.status === "rejected") return false;
+    if (isPendingExpired(b, pendingExpiryMinutes)) return false; // expired pending requests don't block
     const { start: exStart, end: exEnd } = computeBookingWindow(b.date, b.startTime, b.duration);
     return timeRangesOverlap(newStart, newEnd, exStart, exEnd);
   });
@@ -607,16 +643,89 @@ function hasBookingConflict({ facilityId, date, startTime, duration, existingBoo
 
 function isWeekend(dateObj) { const day = dateObj.getDay(); return day === 5 || day === 6; } // Fri/Sat = weekend in BD
 
+/* --------------------------------------------------------- durations --- */
+const DURATIONS = [30, 60, 90];
+function durationLabel(min) { return min < 60 ? min + " min" : (min === 60 ? "1 hour" : (min / 60) + " hours"); }
+
+/* ---------------------------------------------------- 12-hour display --- */
+function to12Hour(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  const period = h < 12 ? "AM" : "PM";
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return pad2(h12) + ":" + pad2(m) + " " + period;
+}
+function dateLabel(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+/* Full human range for a booking, e.g. "11:30 PM – 12:30 AM (Next Day)" */
+function formatBookingRange(date, startTime, duration) {
+  const { end, crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const endHHMM = pad2(end.getHours()) + ":" + pad2(end.getMinutes());
+  return {
+    dateLabel: dateLabel(date),
+    timeLabel: to12Hour(startTime) + " – " + to12Hour(endHHMM) + (crossesMidnight ? " (Next Day)" : ""),
+    crossesMidnight,
+  };
+}
+
+/* ---------------------------------------------------------- statuses --- */
+const PUBLIC_STATUS_DEFAULT = "pending";
+const ADMIN_STATUSES = ["pending", "confirmed", "rejected", "cancelled", "completed", "no_show"];
+const STATUS_LABEL = { pending: "Pending", confirmed: "Confirmed", rejected: "Rejected", cancelled: "Cancelled", completed: "Completed", no_show: "No-Show", expired: "Expired" };
+
+/* -------------------------------------------------------- pending TTL --- */
+/* Returns true if a pending booking has passed the configured expiry window
+   (settings.pendingExpiryMinutes). Expired pending requests no longer block
+   availability and render as "Expired" rather than "Pending" in the admin UI —
+   the stored status is left as "pending" (nothing is silently overwritten);
+   this is a computed, display-time-only state. */
+function isPendingExpired(booking, pendingExpiryMinutes) {
+  if (!pendingExpiryMinutes || booking.status !== "pending") return false;
+  const created = booking.createdAt && booking.createdAt.toDate ? booking.createdAt.toDate() : new Date(booking.createdAt || booking.date);
+  if (isNaN(created)) return false;
+  return (Date.now() - created.getTime()) / 60000 > Number(pendingExpiryMinutes);
+}
+function effectiveStatus(booking, pendingExpiryMinutes) {
+  return isPendingExpired(booking, pendingExpiryMinutes) ? "expired" : booking.status;
+}
+
+function customerIdFromPhone(phone) { return String(phone || "").replace(/\D/g, ""); }
+
+/* ------------------------------------------------- 24h availability --- */
+/* Returns [{ time:"HH:MM", label:"12:00 AM", available:bool }] for every
+   30-minute slot, given a facility/date/duration and the current booking
+   list. Marks past times unavailable when `date` is today, and marks a
+   slot unavailable if it would conflict with an existing (non-cancelled/
+   rejected/expired-pending) booking on the SAME facility — sport is never
+   part of this check, only facilityId. */
+function getAvailableSlots({ facilityId, date, duration, existingBookings, pendingExpiryMinutes }) {
+  const now = new Date();
+  const isToday = date === (now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()));
+  return TIME_SLOTS.map((time) => {
+    let available = true;
+    if (isToday) {
+      const slotDateTime = combineDateTime(date, time);
+      if (slotDateTime.getTime() <= now.getTime()) available = false;
+    }
+    if (available && facilityId) {
+      const conflict = hasBookingConflict({ facilityId, date, startTime: time, duration, existingBookings, pendingExpiryMinutes });
+      if (conflict) available = false;
+    }
+    return { time, label: to12Hour(time), available };
+  });
+}
+
 /* ------------------------------------------------------------- pricing --- */
 /* pricingRules[]: { id, facilityId, dayType:'weekday'|'weekend'|'all',
    startTime,endTime (HH:MM), duration (minutes), price, weekendPrice,
    specialPrice, active }
    Returns { price, rule } or { price: null, rule: null } — callers must
    render "Contact for pricing" rather than ever guessing a number. */
-function resolvePrice({ facilityId, date, startTime, duration, rules }) {
+function resolvePrice({ facilityId, date, startTime, duration, rules, sport }) {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   const weekend = isWeekend(dateObj);
-  const startMin = TIME_SLOTS.indexOf(startTime) >= 0 ? hhmmToMin(startTime) : hhmmToMin(startTime);
+  const startMin = hhmmToMin(startTime);
   const endMin = startMin + Number(duration);
 
   const candidates = (rules || []).filter((r) => {
@@ -625,6 +734,9 @@ function resolvePrice({ facilityId, date, startTime, duration, rules }) {
     if (Number(r.duration) !== Number(duration)) return false;
     if (r.dayType === "weekend" && !weekend) return false;
     if (r.dayType === "weekday" && weekend) return false;
+    // an unset r.sport applies to every sport on the facility; a set r.sport
+    // must match the sport being booked (e.g. Football-only pricing on 7V Turf)
+    if (r.sport && sport && r.sport !== sport) return false;
     const rs = hhmmToMin(r.startTime), re = hhmmToMin(r.endTime);
     // handle windows that cross midnight (e.g. 22:00 -> 02:00)
     if (re <= rs) return startMin >= rs || (endMin % 1440) <= re || endMin <= 1440;
@@ -648,20 +760,43 @@ function hhmmToMin(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h 
    so the panel can be previewed before Firebase is connected.
    ========================================================================= */
 const DEMO = {
+  /* CURRENT ACTIVE FACILITY: 7V Turf, shared by Football + Cricket (same
+     physical surface, same availability — the two sports are NOT separate
+     facilities). UPCOMING FACILITY: Badminton — inactive, admin-controlled,
+     shown under "Upcoming Facilities" with no booking button until Admin
+     flips it active. */
   facilities: [
-    { id: "football-turf", name: "Football / Futsal Turf", sport: "Football & Futsal", description: "FIFA-certified 50mm infill grass, renovated for a professional-quality playing surface.", capacity: "", hours: "", active: true, images: [] },
-    { id: "cricket", name: "Cricket", sport: "Cricket", description: "Enjoy competitive cricket sessions in a dedicated sports environment at Victory Sports Arena.", capacity: "", hours: "", active: true, images: [] },
+    {
+      id: "7v-turf", name: "7V Turf", sports: ["Football", "Cricket"], type: "turf",
+      description: "FIFA-certified 50mm infill grass. A dedicated 7V turf for football and cricket sessions — booking one sport reserves the whole turf.",
+      image: "", gallery: [], active: true, showAsUpcoming: false,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
+    {
+      id: "badminton", name: "Badminton", sports: ["Badminton"], type: "court",
+      description: "Indoor badminton court — coming soon to Victory Sports Arena.",
+      image: "", gallery: [], active: false, showAsUpcoming: true,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
   ],
   pricingRules: [],
   offers: [],
   bookings: [
-    { id: "demo-bk-1", facilityId: "football-turf", facilityName: "Football / Futsal Turf", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX", date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60, price: null, status: "pending", team: null, notes: null, createdAt: new Date().toISOString() },
+    {
+      id: "demo-bk-1", facilityId: "7v-turf", facilityName: "7V Turf", sport: "Football",
+      customerId: "8801XXXXXXXXX", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX",
+      date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60,
+      startTimestamp: null, endTimestamp: null,
+      requestedPrice: null, approvedPrice: null, price: null,
+      status: "pending", adminNotes: null, notes: null, team: null, source: "public",
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), approvedAt: null, approvedBy: null,
+    },
   ],
   events: [
     { id: "demo-ev-1", name: "BKS Tournament", sport: "Football / Futsal", date: "2025-10-01", time: "", description: "Tournament held at Victory Sports Arena.", registration: "", status: "Completed" },
   ],
   gallery: [],
-  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram." },
+  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram.", pendingExpiryMinutes: 30, timezone: "Asia/Dhaka" },
   users: [
     { id: "demo-admin", email: "admin@victorysportsarena.com", role: "admin" },
   ],
@@ -680,7 +815,7 @@ async function loadContent() {
     events = DEMO.events; gallery = DEMO.gallery; settings = DEMO.settings;
   } else {
     const [facSnap, ruleSnap, bookSnap, evSnap, gallerySnap, settingsSnap] = await Promise.all([
-      db.collection(COLLECTIONS.facilities).where("active", "==", true).get(),
+      db.collection(COLLECTIONS.facilities).get(), // active + upcoming both needed (upcoming section shows inactive ones)
       db.collection(COLLECTIONS.pricingRules).where("active", "==", true).get(),
       db.collection(COLLECTIONS.bookings).get(),
       db.collection(COLLECTIONS.events).orderBy("date", "desc").get(),
@@ -694,12 +829,15 @@ async function loadContent() {
     gallery = gallerySnap.docs.map((d) => ({ id: d.id, ...d.data() }));
     settings = settingsSnap.exists ? settingsSnap.data() : DEMO.settings;
   }
-  renderTicker(); renderFacilities(); renderEvents(); renderGallery(); renderContact();
-  populateBookingFacilitySelect(); populateTimeSelect();
+  renderTicker(); renderFacilities(); renderUpcomingFacilities(); renderEvents(); renderGallery(); renderContact();
+  populateBookingFacilitySelect();
 }
 
+function bookableFacilities() { return facilities.filter((f) => f.active); }
+function upcomingFacilities() { return facilities.filter((f) => !f.active && f.showAsUpcoming); }
+
 function renderTicker() {
-  const items = facilities.length ? facilities.map((f) => f.sport || f.name) : ["Football", "Cricket", "Futsal"];
+  const items = bookableFacilities().length ? bookableFacilities().flatMap((f) => f.sports || [f.name]) : ["Football", "Cricket"];
   const labels = ["Now Booking", ...items, "Tournaments", "North Halishahar · Chattogram"];
   const html = labels.map((l, i) => `<span class="${i === 0 ? "on" : ""}">${escapeHtml(l)}</span>`).join("");
   document.getElementById("tickerTrack").innerHTML = html + html;
@@ -712,26 +850,44 @@ function lowestPriceFor(facilityId) {
 
 function renderFacilities() {
   const grid = document.getElementById("facilityGrid");
-  if (!facilities.length) { grid.innerHTML = `<div class="empty-state">Facilities will appear here once added from the Admin Panel.</div>`; return; }
-  grid.innerHTML = facilities.map((f) => {
+  const list = bookableFacilities();
+  if (!list.length) { grid.innerHTML = `<div class="empty-state">Facilities will appear here once activated from the Admin Panel.</div>`; return; }
+  grid.innerHTML = list.map((f) => {
     const price = lowestPriceFor(f.id);
     const priceLabel = price != null ? `From ${formatBDT(price)}/hr` : "Contact for pricing";
-    const hasImg = f.images && f.images[0];
+    const badge = (f.sports || []).join(" + ").toUpperCase();
+    const hasImg = f.image;
     return `<div class="facility-card">
-      <div class="facility-media"><span class="facility-tag">${escapeHtml(f.sport || "")}</span>${hasImg ? `<img src="${f.images[0]}" alt="${escapeHtml(f.name)}">` : `<span>${escapeHtml(f.name)}</span>`}</div>
+      <div class="facility-media"><span class="facility-tag">${escapeHtml(badge)}</span>${hasImg ? `<img src="${f.image}" alt="${escapeHtml(f.name)}">` : `<span>${escapeHtml(f.name)}</span>`}</div>
       <div class="facility-body">
         <h3>${escapeHtml(f.name)}</h3>
         <p>${escapeHtml(f.description || "")}</p>
-        <div class="facility-meta"><span class="price">${priceLabel}</span><span>${escapeHtml(f.capacity || "")}</span></div>
+        <div class="facility-meta"><span class="price">${priceLabel}</span></div>
+        <button class="btn btn-primary btn-block" data-action="book-facility" data-id="${f.id}" style="margin-top:6px;">Book ${escapeHtml(f.name)}</button>
       </div></div>`;
   }).join("");
 }
 
+function renderUpcomingFacilities() {
+  const section = document.getElementById("upcoming-facilities");
+  const grid = document.getElementById("upcomingGrid");
+  const list = upcomingFacilities();
+  if (!list.length) { section.style.display = "none"; return; }
+  section.style.display = "block";
+  grid.innerHTML = list.map((f) => `
+    <div class="upcoming-card">
+      <span class="facility-tag" style="position:static;display:inline-block;">COMING SOON</span>
+      <h3>${escapeHtml(f.name)}</h3>
+      <p>${escapeHtml(f.description || "")}</p>
+    </div>`).join("");
+}
+
 function renderEvents() {
   const list = document.getElementById("eventsList");
-  if (!events.length) { list.innerHTML = `<div class="empty-state">No events scheduled right now — check back soon or follow our Facebook page for updates.</div>`; return; }
+  const published = events.filter((e) => e.published !== false);
+  if (!published.length) { list.innerHTML = `<div class="empty-state">No events scheduled right now — check back soon or follow our Facebook page for updates.</div>`; return; }
   const statusClass = { "Registration Open": "status-open", "Registration Closed": "status-closed", "Upcoming": "status-upcoming", "Completed": "status-completed" };
-  list.innerHTML = events.map((e) => {
+  list.innerHTML = published.map((e) => {
     const d = new Date(e.date);
     const day = isNaN(d) ? "--" : d.getDate();
     const mon = isNaN(d) ? "" : d.toLocaleString("en", { month: "short" });
@@ -772,92 +928,165 @@ const bookingForm = document.getElementById("bookingForm");
 const bookingSuccess = document.getElementById("bookingSuccess");
 const bookingError = document.getElementById("bookingError");
 
-function openModal() { bookingForm.style.display = "block"; bookingSuccess.classList.remove("show"); bookingError.classList.remove("show"); modal.classList.add("open"); }
+function todayStr() { const d = new Date(); return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+
+function openModal(presetFacilityId) {
+  bookingForm.reset();
+  bookingForm.style.display = "block";
+  bookingSuccess.classList.remove("show");
+  bookingError.classList.remove("show");
+  document.getElementById("bf-date").value = todayStr();
+  if (presetFacilityId) document.getElementById("bf-facility").value = presetFacilityId;
+  populateSportSelect();
+  regenerateSlotGrid();
+  modal.classList.add("open");
+}
 function closeModal() { modal.classList.remove("open"); }
-["openBookingBtn", "openBookingBtn2", "openBookingBtn3"].forEach((id) => document.getElementById(id).addEventListener("click", openModal));
+document.getElementById("facilityGrid").addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-action='book-facility']");
+  if (btn) openModal(btn.dataset.id);
+});
+["openBookingBtn", "openBookingBtn2", "openBookingBtn3"].forEach((id) => document.getElementById(id).addEventListener("click", () => openModal()));
 document.getElementById("closeBookingBtn").addEventListener("click", closeModal);
 document.getElementById("closeSuccessBtn").addEventListener("click", closeModal);
 modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
 function populateBookingFacilitySelect() {
-  document.getElementById("bf-facility").innerHTML = facilities.map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  const sel = document.getElementById("bf-facility");
+  sel.innerHTML = bookableFacilities().map((f) => `<option value="${f.id}">${escapeHtml(f.name)}</option>`).join("");
+  sel.addEventListener("change", () => { populateSportSelect(); regenerateSlotGrid(); });
 }
-function populateTimeSelect() {
-  document.getElementById("bf-start").innerHTML = TIME_SLOTS.map((t) => `<option value="${t}">${t}</option>`).join("");
+function currentFacility() { return facilities.find((f) => f.id === document.getElementById("bf-facility").value); }
+function populateSportSelect() {
+  const f = currentFacility();
+  const sportField = document.getElementById("bf-sport-field");
+  const sel = document.getElementById("bf-sport");
+  const sports = (f && f.sports) || [];
+  if (sports.length <= 1) {
+    sportField.style.display = "none";
+    sel.innerHTML = sports.length ? `<option value="${sports[0]}">${sports[0]}</option>` : "";
+  } else {
+    sportField.style.display = "block";
+    sel.innerHTML = sports.map((s) => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join("");
+  }
 }
+document.getElementById("bf-sport").addEventListener("change", regenerateSlotGrid);
+document.getElementById("bf-date").addEventListener("change", regenerateSlotGrid);
+document.getElementById("bf-duration").addEventListener("change", regenerateSlotGrid);
 
-function updatePricePreview() {
+let selectedStart = null;
+function regenerateSlotGrid() {
+  selectedStart = null;
+  document.getElementById("bf-start").value = "";
   const facilityId = document.getElementById("bf-facility").value;
   const date = document.getElementById("bf-date").value;
-  const start = document.getElementById("bf-start").value;
   const duration = document.getElementById("bf-duration").value;
-  const el = document.getElementById("pricePreview");
-  el.classList.remove("err");
-  if (!facilityId || !date || !start) { el.innerHTML = "Select a facility, date and time to see pricing"; return; }
-
-  if (hasBookingConflict({ facilityId, date, startTime: start, duration, existingBookings: bookings })) {
-    el.innerHTML = "This time slot is already booked — please choose another time.";
-    el.classList.add("err");
-    return;
-  }
-  const { price } = resolvePrice({ facilityId, date, startTime: start, duration, rules: pricingRules });
-  const { crossesMidnight } = computeBookingWindow(date, start, duration);
-  el.innerHTML = `Estimated price: <b>${formatBDT(price)}</b>${crossesMidnight ? " · crosses into next day" : ""}`;
+  const grid = document.getElementById("slotGrid");
+  const hint = document.getElementById("slotHint");
+  updatePricePreview();
+  updateReview();
+  if (!facilityId || !date || !duration) { grid.innerHTML = ""; hint.style.display = "block"; hint.textContent = "Select a facility, sport, date and duration to see available times."; return; }
+  hint.style.display = "none";
+  const slots = getAvailableSlots({ facilityId, date, duration, existingBookings: bookings, pendingExpiryMinutes: settings.pendingExpiryMinutes });
+  grid.innerHTML = slots.map((s) => `<button type="button" class="slot-btn" data-time="${s.time}" ${s.available ? "" : "disabled"}>${s.label}</button>`).join("");
 }
-["bf-facility", "bf-date", "bf-start", "bf-duration"].forEach((id) => document.getElementById(id).addEventListener("change", updatePricePreview));
+document.getElementById("slotGrid").addEventListener("click", (e) => {
+  const btn = e.target.closest(".slot-btn"); if (!btn || btn.disabled) return;
+  [...document.querySelectorAll(".slot-btn")].forEach((b) => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  selectedStart = btn.dataset.time;
+  document.getElementById("bf-start").value = selectedStart;
+  updatePricePreview();
+  updateReview();
+});
+
+function updatePricePreview() {
+  const el = document.getElementById("pricePreview");
+  const facilityId = document.getElementById("bf-facility").value;
+  const date = document.getElementById("bf-date").value;
+  const duration = document.getElementById("bf-duration").value;
+  const sport = document.getElementById("bf-sport").value;
+  if (!facilityId || !date || !selectedStart) { el.innerHTML = "Select a time slot to see pricing"; el.classList.remove("err"); return; }
+  el.classList.remove("err");
+  const { price } = resolvePrice({ facilityId, date, startTime: selectedStart, duration, rules: pricingRules, sport });
+  const { timeLabel } = formatBookingRange(date, selectedStart, duration);
+  el.innerHTML = `${timeLabel} · Estimated price: <b>${formatBDT(price)}</b>`;
+}
+function updateReview() {
+  const box = document.getElementById("bookingReview");
+  const f = currentFacility();
+  if (!f || !selectedStart) { box.style.display = "none"; return; }
+  const date = document.getElementById("bf-date").value;
+  const duration = document.getElementById("bf-duration").value;
+  const sport = document.getElementById("bf-sport").value;
+  const { dateLabel: dl, timeLabel } = formatBookingRange(date, selectedStart, duration);
+  box.style.display = "block";
+  box.innerHTML = `<div><b>Review:</b></div><div>${escapeHtml(f.name)}${sport ? " · " + escapeHtml(sport) : ""}</div><div>${dl}</div><div>${timeLabel} (${durationLabel(Number(duration))})</div>`;
+}
 
 bookingForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   bookingError.classList.remove("show");
   const facilityId = document.getElementById("bf-facility").value;
-  const facility = facilities.find((f) => f.id === facilityId);
+  const facility = currentFacility();
   const date = document.getElementById("bf-date").value;
   const startTime = document.getElementById("bf-start").value;
   const duration = document.getElementById("bf-duration").value;
+  const sport = document.getElementById("bf-sport").value;
 
-  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings })) {
+  if (!startTime) { bookingError.textContent = "Please choose an available time slot."; bookingError.classList.add("show"); return; }
+  if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: bookings, pendingExpiryMinutes: settings.pendingExpiryMinutes })) {
     bookingError.textContent = "Sorry — that slot was just taken. Please pick a different time.";
     bookingError.classList.add("show");
+    regenerateSlotGrid();
     return;
   }
 
   const submitBtn = document.getElementById("submitBookingBtn");
   submitBtn.disabled = true; submitBtn.textContent = "Submitting…";
-  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules });
-  const { crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const { price } = resolvePrice({ facilityId, date, startTime, duration, rules: pricingRules, sport });
+  const { start, end, crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const phone = document.getElementById("bf-phone").value;
+  const nowIso = new Date().toISOString();
 
   const booking = {
-    facilityId, facilityName: facility ? facility.name : "",
-    date, startTime, duration: Number(duration), crossesMidnight, price,
-    customerName: document.getElementById("bf-name").value,
-    phone: document.getElementById("bf-phone").value,
+    facilityId, facilityName: facility ? facility.name : "", sport: sport || null,
+    date, startTime, duration: Number(duration), crossesMidnight,
+    startTimestamp: DEMO_MODE ? start.toISOString() : firebase.firestore.Timestamp.fromDate(start),
+    endTimestamp: DEMO_MODE ? end.toISOString() : firebase.firestore.Timestamp.fromDate(end),
+    requestedPrice: price, approvedPrice: null, price,
+    customerId: customerIdFromPhone(phone), customerName: document.getElementById("bf-name").value, phone,
     team: document.getElementById("bf-team").value || null,
-    notes: document.getElementById("bf-notes").value || null,
-    status: "pending",
-    createdAt: DEMO_MODE ? new Date().toISOString() : firebase.firestore.FieldValue.serverTimestamp(),
+    notes: document.getElementById("bf-notes").value || null, adminNotes: null,
+    status: "pending", source: "public",
+    createdAt: DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: DEMO_MODE ? nowIso : firebase.firestore.FieldValue.serverTimestamp(),
+    approvedAt: null, approvedBy: null,
   };
 
   try {
     if (!DEMO_MODE) {
       await db.runTransaction(async (tx) => {
         const snap = await tx.get(db.collection(COLLECTIONS.bookings).where("facilityId", "==", facilityId).where("date", "==", date));
-        const conflicting = snap.docs.map((d) => d.data()).filter((b) => b.status !== "cancelled" && b.status !== "rejected");
-        if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: conflicting })) {
+        const conflicting = snap.docs.map((d) => d.data());
+        if (hasBookingConflict({ facilityId, date, startTime, duration, existingBookings: conflicting, pendingExpiryMinutes: settings.pendingExpiryMinutes })) {
           throw new Error("CONFLICT");
         }
         tx.set(db.collection(COLLECTIONS.bookings).doc(), booking);
       });
-      // upsert a lightweight customer record
-      const custRef = db.collection(COLLECTIONS.customers).doc(booking.phone.replace(/\D/g, ""));
+      const custRef = db.collection(COLLECTIONS.customers).doc(booking.customerId || "unknown");
       await custRef.set({ name: booking.customerName, phone: booking.phone, lastBookingAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
     } else {
-      bookings.push({ id: newId("bk"), ...booking, createdAt: new Date().toISOString() });
+      bookings.push({ id: newId("bk"), ...booking, startTimestamp: start.toISOString(), endTimestamp: end.toISOString(), createdAt: nowIso, updatedAt: nowIso });
     }
+    const { dateLabel: dl, timeLabel } = formatBookingRange(date, startTime, duration);
+    document.getElementById("bookingSuccessDetail").innerHTML = `${escapeHtml(facility.name)}${sport ? " · " + escapeHtml(sport) : ""}<br>${dl}<br>${timeLabel}`;
     bookingForm.style.display = "none";
     bookingSuccess.classList.add("show");
   } catch (err) {
     if (err && err.message === "CONFLICT") {
       bookingError.textContent = "Sorry — that slot was just taken. Please pick a different time.";
+      regenerateSlotGrid();
     } else {
       bookingError.textContent = "Something went wrong submitting your request. Please call us directly at " + (settings.phone || DEMO.settings.phone) + ".";
       console.error(err);
