@@ -147,6 +147,26 @@ section.tight { padding: 60px 0; }
 .badge-manager { background: rgba(46,249,138,.1); color: #7fe9ab; }
 .badge-staff { background: rgba(141,151,166,.14); color: var(--text-muted); }
 .badge-admin { background: rgba(46,249,138,.2); color: var(--accent); }
+.badge-completed { background: rgba(141,151,166,.16); color: var(--text-muted); }
+.badge-no_show { background: rgba(255,92,92,.1); color: var(--danger); }
+.badge-expired { background: rgba(141,151,166,.1); color: var(--text-muted); font-style: italic; }
+.badge-coming-soon { background: rgba(46,249,138,.12); color: var(--accent); }
+
+/* slot grid (public + admin booking forms) */
+.slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px,1fr)); gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px 2px; margin-bottom: 18px; }
+.slot-btn { font-family: var(--font-mono); font-size: 12px; padding: 9px 6px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--bg); color: var(--text-muted); cursor: pointer; text-align: center; }
+.slot-btn:hover:not(:disabled) { border-color: var(--accent-dim); color: var(--text); }
+.slot-btn.selected { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.slot-btn:disabled { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
+.slot-hint { font-size: 12px; color: var(--text-muted); margin: -8px 0 14px; }
+.booking-review { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; font-size: 13px; }
+.booking-review div { margin-bottom: 4px; }
+.booking-review b { color: var(--accent); }
+
+/* upcoming facility card */
+.upcoming-card { background: var(--bg-elevated); border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+.upcoming-card h3 { font-size: 20px; margin: 10px 0 8px; }
+.upcoming-card p { color: var(--text-muted); font-size: 13px; margin: 0; }
 
 .empty-state { border: 1px dashed var(--line); border-radius: var(--radius-lg); padding: 44px; text-align: center; color: var(--text-muted); font-size: 14px; }
 
@@ -392,7 +412,7 @@ const FIREBASE_CONFIG = {
   storageBucket: "victory-c5ef0.firebasestorage.app",
   messagingSenderId: "610792641884",
   appId: "1:610792641884:web:c994635737269e0fc09d99",
-  measurementId: "G-H6KCGFXVQT",
+  measurementId: "G-H6KCGFXVQT"
 };
 const DEMO_MODE = Object.values(FIREBASE_CONFIG).some((v) => String(v).startsWith("PASTE_"));
 
@@ -456,12 +476,13 @@ function timeRangesOverlap(newStart, newEnd, existingStart, existingEnd) {
 
 /* Returns true if a proposed booking conflicts with any existing (non-cancelled/
    non-rejected) booking on the SAME facility. Different facilities never conflict. */
-function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId }) {
+function hasBookingConflict({ facilityId, date, startTime, duration, existingBookings, excludeBookingId, pendingExpiryMinutes }) {
   const { start: newStart, end: newEnd } = computeBookingWindow(date, startTime, duration);
-  return existingBookings.some((b) => {
+  return (existingBookings || []).some((b) => {
     if (b.id === excludeBookingId) return false;
-    if (b.facilityId !== facilityId) return false;
+    if (b.facilityId !== facilityId) return false; // sport is NEVER part of this check — same facility, shared availability
     if (b.status === "cancelled" || b.status === "rejected") return false;
+    if (isPendingExpired(b, pendingExpiryMinutes)) return false; // expired pending requests don't block
     const { start: exStart, end: exEnd } = computeBookingWindow(b.date, b.startTime, b.duration);
     return timeRangesOverlap(newStart, newEnd, exStart, exEnd);
   });
@@ -469,16 +490,89 @@ function hasBookingConflict({ facilityId, date, startTime, duration, existingBoo
 
 function isWeekend(dateObj) { const day = dateObj.getDay(); return day === 5 || day === 6; } // Fri/Sat = weekend in BD
 
+/* --------------------------------------------------------- durations --- */
+const DURATIONS = [30, 60, 90];
+function durationLabel(min) { return min < 60 ? min + " min" : (min === 60 ? "1 hour" : (min / 60) + " hours"); }
+
+/* ---------------------------------------------------- 12-hour display --- */
+function to12Hour(hhmm) {
+  const [h, m] = hhmm.split(":").map(Number);
+  const period = h < 12 ? "AM" : "PM";
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return pad2(h12) + ":" + pad2(m) + " " + period;
+}
+function dateLabel(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+}
+/* Full human range for a booking, e.g. "11:30 PM – 12:30 AM (Next Day)" */
+function formatBookingRange(date, startTime, duration) {
+  const { end, crossesMidnight } = computeBookingWindow(date, startTime, duration);
+  const endHHMM = pad2(end.getHours()) + ":" + pad2(end.getMinutes());
+  return {
+    dateLabel: dateLabel(date),
+    timeLabel: to12Hour(startTime) + " – " + to12Hour(endHHMM) + (crossesMidnight ? " (Next Day)" : ""),
+    crossesMidnight,
+  };
+}
+
+/* ---------------------------------------------------------- statuses --- */
+const PUBLIC_STATUS_DEFAULT = "pending";
+const ADMIN_STATUSES = ["pending", "confirmed", "rejected", "cancelled", "completed", "no_show"];
+const STATUS_LABEL = { pending: "Pending", confirmed: "Confirmed", rejected: "Rejected", cancelled: "Cancelled", completed: "Completed", no_show: "No-Show", expired: "Expired" };
+
+/* -------------------------------------------------------- pending TTL --- */
+/* Returns true if a pending booking has passed the configured expiry window
+   (settings.pendingExpiryMinutes). Expired pending requests no longer block
+   availability and render as "Expired" rather than "Pending" in the admin UI —
+   the stored status is left as "pending" (nothing is silently overwritten);
+   this is a computed, display-time-only state. */
+function isPendingExpired(booking, pendingExpiryMinutes) {
+  if (!pendingExpiryMinutes || booking.status !== "pending") return false;
+  const created = booking.createdAt && booking.createdAt.toDate ? booking.createdAt.toDate() : new Date(booking.createdAt || booking.date);
+  if (isNaN(created)) return false;
+  return (Date.now() - created.getTime()) / 60000 > Number(pendingExpiryMinutes);
+}
+function effectiveStatus(booking, pendingExpiryMinutes) {
+  return isPendingExpired(booking, pendingExpiryMinutes) ? "expired" : booking.status;
+}
+
+function customerIdFromPhone(phone) { return String(phone || "").replace(/\D/g, ""); }
+
+/* ------------------------------------------------- 24h availability --- */
+/* Returns [{ time:"HH:MM", label:"12:00 AM", available:bool }] for every
+   30-minute slot, given a facility/date/duration and the current booking
+   list. Marks past times unavailable when `date` is today, and marks a
+   slot unavailable if it would conflict with an existing (non-cancelled/
+   rejected/expired-pending) booking on the SAME facility — sport is never
+   part of this check, only facilityId. */
+function getAvailableSlots({ facilityId, date, duration, existingBookings, pendingExpiryMinutes }) {
+  const now = new Date();
+  const isToday = date === (now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()));
+  return TIME_SLOTS.map((time) => {
+    let available = true;
+    if (isToday) {
+      const slotDateTime = combineDateTime(date, time);
+      if (slotDateTime.getTime() <= now.getTime()) available = false;
+    }
+    if (available && facilityId) {
+      const conflict = hasBookingConflict({ facilityId, date, startTime: time, duration, existingBookings, pendingExpiryMinutes });
+      if (conflict) available = false;
+    }
+    return { time, label: to12Hour(time), available };
+  });
+}
+
 /* ------------------------------------------------------------- pricing --- */
 /* pricingRules[]: { id, facilityId, dayType:'weekday'|'weekend'|'all',
    startTime,endTime (HH:MM), duration (minutes), price, weekendPrice,
    specialPrice, active }
    Returns { price, rule } or { price: null, rule: null } — callers must
    render "Contact for pricing" rather than ever guessing a number. */
-function resolvePrice({ facilityId, date, startTime, duration, rules }) {
+function resolvePrice({ facilityId, date, startTime, duration, rules, sport }) {
   const dateObj = typeof date === "string" ? new Date(date) : date;
   const weekend = isWeekend(dateObj);
-  const startMin = TIME_SLOTS.indexOf(startTime) >= 0 ? hhmmToMin(startTime) : hhmmToMin(startTime);
+  const startMin = hhmmToMin(startTime);
   const endMin = startMin + Number(duration);
 
   const candidates = (rules || []).filter((r) => {
@@ -487,6 +581,9 @@ function resolvePrice({ facilityId, date, startTime, duration, rules }) {
     if (Number(r.duration) !== Number(duration)) return false;
     if (r.dayType === "weekend" && !weekend) return false;
     if (r.dayType === "weekday" && weekend) return false;
+    // an unset r.sport applies to every sport on the facility; a set r.sport
+    // must match the sport being booked (e.g. Football-only pricing on 7V Turf)
+    if (r.sport && sport && r.sport !== sport) return false;
     const rs = hhmmToMin(r.startTime), re = hhmmToMin(r.endTime);
     // handle windows that cross midnight (e.g. 22:00 -> 02:00)
     if (re <= rs) return startMin >= rs || (endMin % 1440) <= re || endMin <= 1440;
@@ -510,20 +607,43 @@ function hhmmToMin(hhmm) { const [h, m] = hhmm.split(":").map(Number); return h 
    so the panel can be previewed before Firebase is connected.
    ========================================================================= */
 const DEMO = {
+  /* CURRENT ACTIVE FACILITY: 7V Turf, shared by Football + Cricket (same
+     physical surface, same availability — the two sports are NOT separate
+     facilities). UPCOMING FACILITY: Badminton — inactive, admin-controlled,
+     shown under "Upcoming Facilities" with no booking button until Admin
+     flips it active. */
   facilities: [
-    { id: "football-turf", name: "Football / Futsal Turf", sport: "Football & Futsal", description: "FIFA-certified 50mm infill grass, renovated for a professional-quality playing surface.", capacity: "", hours: "", active: true, images: [] },
-    { id: "cricket", name: "Cricket", sport: "Cricket", description: "Enjoy competitive cricket sessions in a dedicated sports environment at Victory Sports Arena.", capacity: "", hours: "", active: true, images: [] },
+    {
+      id: "7v-turf", name: "7V Turf", sports: ["Football", "Cricket"], type: "turf",
+      description: "FIFA-certified 50mm infill grass. A dedicated 7V turf for football and cricket sessions — booking one sport reserves the whole turf.",
+      image: "", gallery: [], active: true, showAsUpcoming: false,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
+    {
+      id: "badminton", name: "Badminton", sports: ["Badminton"], type: "court",
+      description: "Indoor badminton court — coming soon to Victory Sports Arena.",
+      image: "", gallery: [], active: false, showAsUpcoming: true,
+      openingTime: "00:00", closingTime: "23:59", allowedDurations: [30, 60, 90], rules: [],
+    },
   ],
   pricingRules: [],
   offers: [],
   bookings: [
-    { id: "demo-bk-1", facilityId: "football-turf", facilityName: "Football / Futsal Turf", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX", date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60, price: null, status: "pending", team: null, notes: null, createdAt: new Date().toISOString() },
+    {
+      id: "demo-bk-1", facilityId: "7v-turf", facilityName: "7V Turf", sport: "Football",
+      customerId: "8801XXXXXXXXX", customerName: "Rakib Hasan", phone: "+8801XXXXXXXXX",
+      date: new Date().toISOString().slice(0, 10), startTime: "19:00", duration: 60,
+      startTimestamp: null, endTimestamp: null,
+      requestedPrice: null, approvedPrice: null, price: null,
+      status: "pending", adminNotes: null, notes: null, team: null, source: "public",
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), approvedAt: null, approvedBy: null,
+    },
   ],
   events: [
     { id: "demo-ev-1", name: "BKS Tournament", sport: "Football / Futsal", date: "2025-10-01", time: "", description: "Tournament held at Victory Sports Arena.", registration: "", status: "Completed" },
   ],
   gallery: [],
-  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram." },
+  settings: { phone: "+8801601669203", address: "Ful Chowdhury Para, North Halishahar, Chattogram 4216, Bangladesh", facebook: "https://www.facebook.com/victorysportarena/", hero: "Your destination for football, cricket, futsal and unforgettable sports experiences in Chattogram.", pendingExpiryMinutes: 30, timezone: "Asia/Dhaka" },
   users: [
     { id: "demo-admin", email: "admin@victorysportsarena.com", role: "admin" },
   ],
@@ -557,12 +677,11 @@ async function loadPricingContent() {
 }
 
 const DAY_LABEL = { all: "All days", weekday: "Weekdays", weekend: "Weekend (Fri–Sat)" };
-const DUR_LABEL = { 60: "1 hour", 90: "1.5 hours", 120: "2 hours" };
 
 function renderPricingTables() {
   const wrap = document.getElementById("pricingTables");
   if (!facilities.length) {
-    wrap.innerHTML = `<div class="empty-state">Pricing will appear here once facilities are added from the Admin Panel.</div>`;
+    wrap.innerHTML = `<div class="empty-state">Pricing will appear here once facilities are activated from the Admin Panel.</div>`;
     return;
   }
   wrap.innerHTML = facilities.map((f) => {
@@ -570,18 +689,19 @@ function renderPricingTables() {
     const rowsHtml = rules.length
       ? rules.map((r) => `
         <tr>
+          <td>${escapeHtml(r.sport || "All sports")}</td>
           <td>${DAY_LABEL[r.dayType] || r.dayType}</td>
-          <td>${escapeHtml(r.startTime)}–${escapeHtml(r.endTime)}</td>
-          <td>${DUR_LABEL[r.duration] || r.duration + " min"}</td>
+          <td>${to12Hour(r.startTime)}–${to12Hour(r.endTime)}</td>
+          <td>${durationLabel(Number(r.duration))}</td>
           <td class="price-cell">${formatBDT(r.price)}</td>
           <td class="price-cell">${r.weekendPrice != null && r.weekendPrice !== "" ? formatBDT(r.weekendPrice) : "—"}</td>
           <td class="price-cell">${r.specialPrice != null && r.specialPrice !== "" ? formatBDT(r.specialPrice) : "—"}</td>
         </tr>`).join("")
-      : `<tr><td colspan="6" style="color:var(--text-muted);">Contact for pricing — rates for this facility have not been published yet.</td></tr>`;
+      : `<tr><td colspan="7" style="color:var(--text-muted);">Contact for pricing — rates for this facility have not been published yet.</td></tr>`;
     return `<div class="pricing-table-wrap">
-      <h3><span>${escapeHtml(f.name)}</span><span class="eyebrow" style="margin:0;">${escapeHtml(f.sport || "")}</span></h3>
+      <h3><span>${escapeHtml(f.name)}</span><span class="eyebrow" style="margin:0;">${escapeHtml((f.sports || []).join(" + "))}</span></h3>
       <table class="pricing-table">
-        <thead><tr><th>Applies to</th><th>Time window</th><th>Duration</th><th>Price</th><th>Weekend</th><th>Special</th></tr></thead>
+        <thead><tr><th>Sport</th><th>Applies to</th><th>Time window</th><th>Duration</th><th>Price</th><th>Weekend</th><th>Special</th></tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
     </div>`;
